@@ -13,6 +13,10 @@ const zenOldMincho = Zen_Old_Mincho({
 export const metadata: Metadata = {
   title: "Gestão de Consumidores",
   description: "Aplicação de gestão consumidores",
+  icons: {
+    icon: "/icons/icon-192x192.png",
+    apple: "/icons/icon-192x192.png",
+  },
 };
 
 export default function RootLayout({
