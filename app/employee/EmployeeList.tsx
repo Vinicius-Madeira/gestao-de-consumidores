@@ -1,4 +1,3 @@
-// components/EmployeeList.tsx
 "use client";
 
 import { useState } from "react";
@@ -266,12 +265,12 @@ export default function EmployeeList({ companyId }: EmployeeListProps) {
     <form action={onSubmit} className="space-y-4">
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="identifier">Colaborador ID</Label>
+          <Label htmlFor="identifier">Identificador</Label>
           <Input
             id="identifier"
             name="identifier"
             defaultValue={employee?.identifier}
-            placeholder="Enter employee ID"
+            placeholder="Cliente, Colaborador..."
             required
           />
         </div>
@@ -281,7 +280,7 @@ export default function EmployeeList({ companyId }: EmployeeListProps) {
             id="name"
             name="name"
             defaultValue={employee?.name}
-            placeholder="Enter full name"
+            placeholder="Insira o nome completo"
             required
           />
         </div>
@@ -294,7 +293,7 @@ export default function EmployeeList({ companyId }: EmployeeListProps) {
             id="role"
             name="role"
             defaultValue={employee?.role}
-            placeholder="Enter role"
+            placeholder="Desenvolvedor..."
             required
           />
         </div>
@@ -305,7 +304,7 @@ export default function EmployeeList({ companyId }: EmployeeListProps) {
             defaultValue={employee?.companyId?.toString()}
           >
             <SelectTrigger>
-              <SelectValue placeholder="Select company" />
+              <SelectValue placeholder="Selecione a Empresa" />
             </SelectTrigger>
             <SelectContent>
               {companies.map((company) => (
@@ -325,7 +324,7 @@ export default function EmployeeList({ companyId }: EmployeeListProps) {
             id="phoneNumber"
             name="phoneNumber"
             defaultValue={employee?.phoneNumber}
-            placeholder="Enter phone number"
+            placeholder="99999-9999"
             required
           />
         </div>
@@ -336,7 +335,7 @@ export default function EmployeeList({ companyId }: EmployeeListProps) {
             name="email"
             type="email"
             defaultValue={employee?.email}
-            placeholder="Enter email"
+            placeholder="seuemail@exemplo.com"
             required
           />
         </div>
@@ -346,7 +345,7 @@ export default function EmployeeList({ companyId }: EmployeeListProps) {
         <Button type="button" variant="outline" onClick={onCancel}>
           Cancelar
         </Button>
-        <Button type="submit">
+        <Button className="text-white" type="submit">
           {employee ? "Atualizar" : "Criar"} Colaborador
         </Button>
       </div>
@@ -400,8 +399,7 @@ export default function EmployeeList({ companyId }: EmployeeListProps) {
             <DialogHeader>
               <DialogTitle>Adicionar Novo Colaborador</DialogTitle>
               <DialogDescription>
-                Criar um novo registro de colaborador. Preencha todas as
-                informações necessárias.
+                Preencha todos os campos abaixo.
               </DialogDescription>
             </DialogHeader>
             <EmployeeForm

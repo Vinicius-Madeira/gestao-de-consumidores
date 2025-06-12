@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-// components/CompanyList.tsx
 "use client";
 
 import { useState } from "react";
@@ -222,7 +221,7 @@ export default function CompanyList() {
             <span className="text-sm">{manager}</span>
           </div>
         ) : (
-          <span className="text-sm text-gray-400 italic">Not assigned</span>
+          <span className="text-sm text-gray-400 italic">Não informado</span>
         );
       },
     },
@@ -313,7 +312,7 @@ export default function CompanyList() {
               id="name"
               name="name"
               defaultValue={company?.name}
-              placeholder="Enter company name"
+              placeholder="Insira o nome da empresa"
               required
             />
           </div>
@@ -323,7 +322,7 @@ export default function CompanyList() {
               id="businessName"
               name="businessName"
               defaultValue={company?.businessName}
-              placeholder="Enter business name"
+              placeholder="Insira a razão social"
               required
             />
           </div>
@@ -335,7 +334,7 @@ export default function CompanyList() {
               id="cnpj"
               name="cnpj"
               defaultValue={company?.cnpj}
-              placeholder="Enter CNPJ"
+              placeholder="00.000.000/0000-00"
               required
             />
           </div>
@@ -345,7 +344,7 @@ export default function CompanyList() {
               id="supplier"
               name="supplier"
               defaultValue={company?.supplier}
-              placeholder="Enter supplier"
+              placeholder="Enel..."
               required
             />
           </div>
@@ -362,7 +361,7 @@ export default function CompanyList() {
               id="street"
               name="street"
               defaultValue={company?.street}
-              placeholder="Enter street address"
+              placeholder="Rua Exemplo..."
               required
             />
           </div>
@@ -372,7 +371,7 @@ export default function CompanyList() {
               id="addressNumber"
               name="addressNumber"
               defaultValue={company?.addressNumber}
-              placeholder="Number"
+              placeholder="Número"
               required
             />
           </div>
@@ -384,7 +383,7 @@ export default function CompanyList() {
               id="city"
               name="city"
               defaultValue={company?.city}
-              placeholder="Enter city"
+              placeholder="São Paulo..."
               required
             />
           </div>
@@ -394,7 +393,7 @@ export default function CompanyList() {
               id="state"
               name="state"
               defaultValue={company?.state}
-              placeholder="Enter state"
+              placeholder="SP..."
               required
             />
           </div>
@@ -404,7 +403,7 @@ export default function CompanyList() {
               id="zipCode"
               name="zipCode"
               defaultValue={company?.zipCode}
-              placeholder="Enter ZIP code"
+              placeholder="11111-000"
               required
             />
           </div>
@@ -421,7 +420,7 @@ export default function CompanyList() {
               id="billingRateType"
               name="billingRateType"
               defaultValue={company?.billingRateType}
-              placeholder="Enter billing rate type"
+              placeholder="Azul, Verde..."
               required
             />
           </div>
@@ -435,7 +434,7 @@ export default function CompanyList() {
               type="number"
               step="0.01"
               defaultValue={company?.averageInvoiceValue}
-              placeholder="Enter average invoice value"
+              placeholder="R$"
               required
             />
           </div>
@@ -448,7 +447,7 @@ export default function CompanyList() {
               name="peakConsumption"
               type="number"
               defaultValue={company?.peakConsumption}
-              placeholder="Enter peak consumption"
+              placeholder="(kWh)"
               required
             />
           </div>
@@ -461,7 +460,7 @@ export default function CompanyList() {
               name="offPeakConsumption"
               type="number"
               defaultValue={company?.offPeakConsumption}
-              placeholder="Enter off-peak consumption"
+              placeholder="(kWh)"
               required
             />
           </div>
@@ -472,7 +471,7 @@ export default function CompanyList() {
             id="responsibleManager"
             name="responsibleManager"
             defaultValue={company?.responsibleManager}
-            placeholder="Enter responsible manager (optional)"
+            placeholder="(Opcional)"
           />
         </div>
       </div>
@@ -549,8 +548,7 @@ export default function CompanyList() {
             <DialogHeader>
               <DialogTitle>Adicionar Nova Empresa</DialogTitle>
               <DialogDescription>
-                Crie uma nova empresa para gerenciar seus dados de consumo de
-                energia. Preencha todas as informações necessárias.
+                Preencha todos os campos abaixo.
               </DialogDescription>
             </DialogHeader>
             <CompanyForm
