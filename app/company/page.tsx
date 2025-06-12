@@ -1,3 +1,5 @@
+export const dynamic = "force-static";
+
 import CompanyList from "./CompanyList";
 
 export default function CompanyPage() {

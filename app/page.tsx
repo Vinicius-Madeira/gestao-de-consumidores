@@ -1,5 +1,6 @@
-"use client";
-import FileUploader from "@/components/fileUploader";
+export const dynamic = "force-static";
+
+import FileUploader from "@/components/file-uploader";
 
 export default function DashboardPage() {
   return (

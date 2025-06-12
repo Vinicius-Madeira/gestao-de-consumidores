@@ -1,3 +1,5 @@
+export const dynamic = "force-static";
+
 import EmployeeList from "./EmployeeList";
 
 export default function CollaboratorPage() {

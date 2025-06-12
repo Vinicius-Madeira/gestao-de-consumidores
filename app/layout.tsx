@@ -3,6 +3,7 @@ import { Zen_Old_Mincho } from "next/font/google";
 import "./globals.css";
 import { Sidebar } from "@/components/sidebar";
 import { ThemeProvider } from "@/components/theme-provider";
+import PWAHandler from "@/components/pwa-handler";
 
 const zenOldMincho = Zen_Old_Mincho({
   variable: "--font-zen-old-mincho",
@@ -36,6 +37,7 @@ export default function RootLayout({
           <Sidebar>
             <main className="flex flex-col flex-grow">{children}</main>
           </Sidebar>
+          <PWAHandler />
         </ThemeProvider>
       </body>
     </html>

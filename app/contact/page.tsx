@@ -1,3 +1,5 @@
+export const dynamic = "force-static";
+
 export default function ContactsPage() {
   return (
     <div className="flex flex-1">
