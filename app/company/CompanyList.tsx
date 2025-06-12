@@ -49,6 +49,10 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { IconCurrencyReal } from "@tabler/icons-react";
+import Link from "next/link";
+import { CompanyForm } from "./CompanyForm";
+import { formatConsumption, formatCurrency } from "@/lib/utils";
 
 export default function CompanyList() {
   const {
@@ -126,38 +130,29 @@ export default function CompanyList() {
     }
   };
 
-  // Format currency for display
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    }).format(value);
-  };
-
-  // Format consumption with unit
-  const formatConsumption = (value: number) => {
-    return `${value.toLocaleString("pt-BR")} kWh`;
-  };
-
   // Define table columns - only showing specified properties
   const columns: ColumnDef<Company>[] = [
     {
       accessorKey: "name",
       header: "Nome da Empresa",
       cell: ({ row }) => (
-        <div className="flex items-center gap-2">
-          <Building className="h-4 w-4 text-gray-400" />
-          <span className="font-medium">{row.getValue("name")}</span>
-        </div>
+        <Link href={`/company/${row.original.id}`}>
+          <div className="flex items-center gap-2">
+            <Building className="h-4 w-4 text-gray-400" />
+            <span className="font-medium">{row.getValue("name")}</span>
+          </div>
+        </Link>
       ),
     },
     {
       accessorKey: "businessName",
       header: "Razão Social",
       cell: ({ row }) => (
-        <span className="text-sm text-gray-600">
-          {row.getValue("businessName")}
-        </span>
+        <Link href={`/company/${row.original.id}`}>
+          <span className="text-sm text-gray-600 dark:text-gray-300">
+            {row.getValue("businessName")}
+          </span>
+        </Link>
       ),
     },
     {
@@ -291,202 +286,6 @@ export default function CompanyList() {
     },
   ];
 
-  // Company form component
-  const CompanyForm = ({
-    company,
-    onSubmit,
-    onCancel,
-  }: {
-    company?: Company;
-    onSubmit: (formData: FormData) => void;
-    onCancel: () => void;
-  }) => (
-    <form action={onSubmit} className="space-y-6">
-      {/* Basic Information */}
-      <div className="space-y-4">
-        <h3 className="text-lg font-medium">Informações Gerais</h3>
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="name">Nome da Empresa</Label>
-            <Input
-              id="name"
-              name="name"
-              defaultValue={company?.name}
-              placeholder="Insira o nome da empresa"
-              required
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="businessName">Razão Social</Label>
-            <Input
-              id="businessName"
-              name="businessName"
-              defaultValue={company?.businessName}
-              placeholder="Insira a razão social"
-              required
-            />
-          </div>
-        </div>
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="cnpj">CNPJ</Label>
-            <Input
-              id="cnpj"
-              name="cnpj"
-              defaultValue={company?.cnpj}
-              placeholder="00.000.000/0000-00"
-              required
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="supplier">Distribuidora</Label>
-            <Input
-              id="supplier"
-              name="supplier"
-              defaultValue={company?.supplier}
-              placeholder="Enel..."
-              required
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* Address Information */}
-      <div className="space-y-4">
-        <h3 className="text-lg font-medium">Endereço</h3>
-        <div className="grid grid-cols-3 gap-4">
-          <div className="space-y-2 col-span-2">
-            <Label htmlFor="street">Rua</Label>
-            <Input
-              id="street"
-              name="street"
-              defaultValue={company?.street}
-              placeholder="Rua Exemplo..."
-              required
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="addressNumber">Number</Label>
-            <Input
-              id="addressNumber"
-              name="addressNumber"
-              defaultValue={company?.addressNumber}
-              placeholder="Número"
-              required
-            />
-          </div>
-        </div>
-        <div className="grid grid-cols-3 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="city">Cidade</Label>
-            <Input
-              id="city"
-              name="city"
-              defaultValue={company?.city}
-              placeholder="São Paulo..."
-              required
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="state">Estado</Label>
-            <Input
-              id="state"
-              name="state"
-              defaultValue={company?.state}
-              placeholder="SP..."
-              required
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="zipCode">CPF</Label>
-            <Input
-              id="zipCode"
-              name="zipCode"
-              defaultValue={company?.zipCode}
-              placeholder="11111-000"
-              required
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* Billing Information */}
-      <div className="space-y-4">
-        <h3 className="text-lg font-medium">Faturamento e Consumo</h3>
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="billingRateType">Modalidade Tarifária</Label>
-            <Input
-              id="billingRateType"
-              name="billingRateType"
-              defaultValue={company?.billingRateType}
-              placeholder="Azul, Verde..."
-              required
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="averageInvoiceValue">
-              Valor Médio da Fatura (R$)
-            </Label>
-            <Input
-              id="averageInvoiceValue"
-              name="averageInvoiceValue"
-              type="number"
-              step="0.01"
-              defaultValue={company?.averageInvoiceValue}
-              placeholder="R$"
-              required
-            />
-          </div>
-        </div>
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="peakConsumption">Consumo de Ponta (kWh)</Label>
-            <Input
-              id="peakConsumption"
-              name="peakConsumption"
-              type="number"
-              defaultValue={company?.peakConsumption}
-              placeholder="(kWh)"
-              required
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="offPeakConsumption">
-              Consumo Fora de Ponta (kWh)
-            </Label>
-            <Input
-              id="offPeakConsumption"
-              name="offPeakConsumption"
-              type="number"
-              defaultValue={company?.offPeakConsumption}
-              placeholder="(kWh)"
-              required
-            />
-          </div>
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="responsibleManager">Gestor Responsável</Label>
-          <Input
-            id="responsibleManager"
-            name="responsibleManager"
-            defaultValue={company?.responsibleManager}
-            placeholder="(Opcional)"
-          />
-        </div>
-      </div>
-
-      <div className="flex justify-end gap-2">
-        <Button type="button" variant="outline" onClick={onCancel}>
-          Cancelar
-        </Button>
-        <Button className="text-white" type="submit">
-          {company ? "Atualizar" : "Criar"} Empresa
-        </Button>
-      </div>
-    </form>
-  );
-
   if (loading) {
     return (
       <div className="flex items-center justify-center h-48">
@@ -606,7 +405,7 @@ export default function CompanyList() {
             <CardTitle className="text-sm font-medium">
               Valor Médio das Faturas
             </CardTitle>
-            <DollarSign className="h-4 w-4 text-green-500" />
+            <IconCurrencyReal className="h-4 w-4 text-green-500" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
@@ -619,7 +418,7 @@ export default function CompanyList() {
       {/* Data Table */}
       <Card>
         <CardHeader>
-          <CardTitle>Company Directory</CardTitle>
+          <CardTitle>Listagem de Empresas</CardTitle>
         </CardHeader>
         <CardContent>
           <DataTable columns={columns} data={companies} />
@@ -633,11 +432,8 @@ export default function CompanyList() {
       >
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Edit Company</DialogTitle>
-            <DialogDescription>
-              Update the company information. Make sure all required fields are
-              filled.
-            </DialogDescription>
+            <DialogTitle>Editar Empresa</DialogTitle>
+            <DialogDescription>Atualize os dados da empresa.</DialogDescription>
           </DialogHeader>
           {editingCompany && (
             <CompanyForm

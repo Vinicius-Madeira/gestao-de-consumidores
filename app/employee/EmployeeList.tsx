@@ -7,15 +7,6 @@ import { Employee } from "@/lib/dexie/db";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/ui/data-table";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -55,6 +46,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { EmployeeForm } from "./EmployeeForm";
 
 interface EmployeeListProps {
   companyId?: number;
@@ -238,7 +230,7 @@ export default function EmployeeList({ companyId }: EmployeeListProps) {
                     <AlertDialogCancel>Cancelar</AlertDialogCancel>
                     <AlertDialogAction
                       onClick={() => handleDelete(employee.id!)}
-                      className="bg-red-600 hover:bg-red-700"
+                      className="bg-red-600 hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600 text-white"
                     >
                       Deletar
                     </AlertDialogAction>
@@ -251,106 +243,6 @@ export default function EmployeeList({ companyId }: EmployeeListProps) {
       },
     },
   ];
-
-  // Employee form component
-  const EmployeeForm = ({
-    employee,
-    onSubmit,
-    onCancel,
-  }: {
-    employee?: Employee;
-    onSubmit: (formData: FormData) => void;
-    onCancel: () => void;
-  }) => (
-    <form action={onSubmit} className="space-y-4">
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="identifier">Identificador</Label>
-          <Input
-            id="identifier"
-            name="identifier"
-            defaultValue={employee?.identifier}
-            placeholder="Cliente, Colaborador..."
-            required
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="name">Nome Completo</Label>
-          <Input
-            id="name"
-            name="name"
-            defaultValue={employee?.name}
-            placeholder="Insira o nome completo"
-            required
-          />
-        </div>
-      </div>
-
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="role">Cargo</Label>
-          <Input
-            id="role"
-            name="role"
-            defaultValue={employee?.role}
-            placeholder="Desenvolvedor..."
-            required
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="companyId">Empresa</Label>
-          <Select
-            name="companyId"
-            defaultValue={employee?.companyId?.toString()}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Selecione a Empresa" />
-            </SelectTrigger>
-            <SelectContent>
-              {companies.map((company) => (
-                <SelectItem key={company.id} value={company.id!.toString()}>
-                  {company.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="phoneNumber">Número de Telefone</Label>
-          <Input
-            id="phoneNumber"
-            name="phoneNumber"
-            defaultValue={employee?.phoneNumber}
-            placeholder="99999-9999"
-            required
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
-          <Input
-            id="email"
-            name="email"
-            type="email"
-            defaultValue={employee?.email}
-            placeholder="seuemail@exemplo.com"
-            required
-          />
-        </div>
-      </div>
-
-      <div className="flex justify-end gap-2">
-        <Button type="button" variant="outline" onClick={onCancel}>
-          Cancelar
-        </Button>
-        <Button className="text-white" type="submit">
-          {employee ? "Atualizar" : "Criar"} Colaborador
-        </Button>
-      </div>
-    </form>
-  );
 
   if (loading) {
     return (
@@ -403,6 +295,7 @@ export default function EmployeeList({ companyId }: EmployeeListProps) {
               </DialogDescription>
             </DialogHeader>
             <EmployeeForm
+              companies={companies}
               onSubmit={handleCreate}
               onCancel={() => setIsCreating(false)}
             />
@@ -477,6 +370,7 @@ export default function EmployeeList({ companyId }: EmployeeListProps) {
           {editingEmployee && (
             <EmployeeForm
               employee={editingEmployee}
+              companies={companies}
               onSubmit={handleUpdate}
               onCancel={() => setEditingEmployee(null)}
             />
