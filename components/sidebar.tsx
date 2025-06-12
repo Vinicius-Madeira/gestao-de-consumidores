@@ -13,47 +13,49 @@ import { cn } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { ScrollArea } from "./ui/scroll-area";
 
 type SidebarProps = PropsWithChildren;
 
+const links = [
+  {
+    label: "Dashboard",
+    href: "/",
+    icon: (
+      <IconLayoutDashboard className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
+    ),
+  },
+  {
+    label: "Empresas",
+    href: "/company",
+    icon: (
+      <IconBuildings className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
+    ),
+  },
+  {
+    label: "Colaboradores",
+    href: "/employee",
+    icon: (
+      <IconUsers className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
+    ),
+  },
+  {
+    label: "Contatos",
+    href: "/contact",
+    icon: (
+      <IconAddressBook className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
+    ),
+  },
+  {
+    label: "Fazer Logout",
+    href: "#",
+    icon: (
+      <IconLogout2 className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
+    ),
+  },
+];
+
 export function Sidebar({ children }: SidebarProps) {
-  const links = [
-    {
-      label: "Dashboard",
-      href: "/",
-      icon: (
-        <IconLayoutDashboard className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
-      ),
-    },
-    {
-      label: "Empresas",
-      href: "/company",
-      icon: (
-        <IconBuildings className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
-      ),
-    },
-    {
-      label: "Colaboradores",
-      href: "/collaborator",
-      icon: (
-        <IconUsers className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
-      ),
-    },
-    {
-      label: "Contatos",
-      href: "/contact",
-      icon: (
-        <IconAddressBook className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
-      ),
-    },
-    {
-      label: "Fazer Logout",
-      href: "#",
-      icon: (
-        <IconLogout2 className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
-      ),
-    },
-  ];
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
   return (
@@ -96,7 +98,7 @@ export function Sidebar({ children }: SidebarProps) {
           </div>
         </SidebarBody>
       </SidebarRoot>
-      {children}
+      <ScrollArea className="flex flex-1">{children}</ScrollArea>
     </div>
   );
 }
