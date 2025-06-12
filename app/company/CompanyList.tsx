@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import { useState } from "react";
@@ -7,8 +6,6 @@ import { Company } from "@/lib/dexie/db";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/ui/data-table";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -20,7 +17,6 @@ import {
   Zap,
   DollarSign,
   User,
-  Copy,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -237,12 +233,6 @@ export default function CompanyList() {
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Ações</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onClick={() => navigator.clipboard.writeText(company.cnpj)}
-              >
-                <Copy className="mr-2 h-4 w-4" />
-                Copiar CNPJ
-              </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setEditingCompany(company)}>
                 <Pencil className="mr-2 h-4 w-4" />
                 Editar
@@ -330,7 +320,7 @@ export default function CompanyList() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Empresas</h1>
+          <h1 className="text-4xl font-bold tracking-tight">Empresas</h1>
           <p className="text-muted-foreground">
             Gerencie empresas e seus dados de consumo de energia
           </p>

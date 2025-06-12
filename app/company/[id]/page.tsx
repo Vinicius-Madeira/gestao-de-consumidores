@@ -25,6 +25,10 @@ import {
   Trash2,
   User,
   Zap,
+  MapPin,
+  FileText,
+  Truck,
+  Settings,
 } from "lucide-react";
 import { IconCurrencyReal } from "@tabler/icons-react";
 import { formatConsumption, formatCurrency } from "@/lib/utils";
@@ -273,7 +277,9 @@ export default function Page() {
               <h1 className="text-3xl font-bold tracking-tight">
                 {company.name}
               </h1>
-              <p className="text-muted-foreground">{company.businessName}</p>
+              <p className="text-muted-foreground">
+                Responsável: {company.responsibleManager || "Não informado"}
+              </p>
             </div>
 
             {/* Edit Company Dialog */}
@@ -302,12 +308,80 @@ export default function Page() {
             </Dialog>
           </div>
 
-          {/* Stats Cards */}
-          <div className="grid gap-4 md:grid-cols-4">
+          {/* Company Information Cards */}
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {/* Address Card */}
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Endereço</CardTitle>
+                <MapPin className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent className="space-y-1">
+                <div className="text-sm">
+                  <div className="font-medium">
+                    {company.street}, {company.addressNumber}
+                  </div>
+                  <div className="text-muted-foreground">
+                    {company.city}, {company.state}
+                  </div>
+                  <div className="text-muted-foreground">
+                    CEP: {company.zipCode}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Business Information Card */}
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">
-                  Consumo de Ponta Total
+                  Informações Corporativas
+                </CardTitle>
+                <FileText className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent className="space-y-1">
+                <div className="text-sm">
+                  <div className="font-medium">CNPJ</div>
+                  <div className="text-muted-foreground font-mono">
+                    {company.cnpj}
+                  </div>
+                  <div className="font-medium mt-2">Razão Social</div>
+                  <div className="text-muted-foreground">
+                    {company.businessName}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Supplier and Billing Card */}
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">
+                  Distribuidora e Modalidade
+                </CardTitle>
+                <Settings className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent className="space-y-1">
+                <div className="text-sm">
+                  <div className="font-medium">Distribuidora</div>
+                  <div className="text-muted-foreground mt-1">
+                    <Badge variant="outline">{company.supplier}</Badge>
+                  </div>
+                  <div className="font-medium mt-2">Modalidade Tarifária</div>
+                  <div className="text-muted-foreground mt-1">
+                    <Badge variant="secondary">{company.billingRateType}</Badge>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Consumption Stats Cards */}
+          <div className="grid gap-4 md:grid-cols-3">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">
+                  Consumo de Ponta
                 </CardTitle>
                 <Zap className="h-4 w-4 text-orange-500" />
               </CardHeader>
@@ -321,7 +395,7 @@ export default function Page() {
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">
-                  Consumo Fora de Ponta Total
+                  Consumo Fora de Ponta
                 </CardTitle>
                 <Zap className="h-4 w-4 text-blue-500" />
               </CardHeader>
@@ -335,7 +409,7 @@ export default function Page() {
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">
-                  Valor Médio das Faturas
+                  Valor Médio da Fatura
                 </CardTitle>
                 <IconCurrencyReal className="h-4 w-4 text-green-500" />
               </CardHeader>
@@ -347,7 +421,7 @@ export default function Page() {
             </Card>
           </div>
 
-          {/* Data Table */}
+          {/* Employees Table */}
           <Card>
             <CardHeader>
               <CardTitle>Listagem de Colaboradores</CardTitle>

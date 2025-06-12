@@ -195,12 +195,6 @@ export default function EmployeeList({ companyId }: EmployeeListProps) {
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Ações</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onClick={() => navigator.clipboard.writeText(employee.email)}
-              >
-                <Mail className="mr-2 h-4 w-4" />
-                Copiar Email
-              </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setEditingEmployee(employee)}>
                 <Pencil className="mr-2 h-4 w-4" />
                 Editar
@@ -274,7 +268,7 @@ export default function EmployeeList({ companyId }: EmployeeListProps) {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">
+          <h1 className="text-4xl font-bold tracking-tight">
             {companyId ? "Company Employees" : "Colaboradores"}
           </h1>
           <p className="text-muted-foreground">Gerencie os colaboradores</p>
@@ -304,7 +298,7 @@ export default function EmployeeList({ companyId }: EmployeeListProps) {
       </div>
 
       {/* Stats Card */}
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
@@ -327,18 +321,6 @@ export default function EmployeeList({ companyId }: EmployeeListProps) {
           <CardContent>
             <div className="text-2xl font-bold">
               {new Set(employees.map((e) => e.companyId)).size}
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Cargos Únicos</CardTitle>
-            <Badge className="h-4 w-4" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {new Set(employees.map((e) => e.role)).size}
             </div>
           </CardContent>
         </Card>

@@ -109,7 +109,7 @@ export const CompanyForm = ({
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="zipCode">CPF</Label>
+          <Label htmlFor="zipCode">CEP</Label>
           <Input
             id="zipCode"
             name="zipCode"
