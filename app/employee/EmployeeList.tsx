@@ -1,12 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useEmployees } from "@/hooks/useEmployees";
 import { useCompanies } from "@/hooks/useCompanies";
 import { Employee } from "@/schemas/EmployeeSchema";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/ui/data-table";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -18,6 +20,8 @@ import {
   Mail,
   User,
   Building,
+  X,
+  Filter,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -46,8 +50,28 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import { EmployeeForm } from "./EmployeeForm";
 import DataCard from "@/components/data-card";
+
+interface EmployeeFilters {
+  identifier: string;
+  name: string;
+  role: string;
+  companyId: string;
+  email: string;
+}
 
 interface EmployeeListProps {
   companyId?: string;
@@ -66,6 +90,58 @@ export default function EmployeeList({ companyId }: EmployeeListProps) {
   const { companies } = useCompanies();
   const [isCreating, setIsCreating] = useState(false);
   const [editingEmployee, setEditingEmployee] = useState<Employee | null>(null);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [filters, setFilters] = useState<EmployeeFilters>({
+    identifier: "",
+    name: "",
+    role: "",
+    companyId: "",
+    email: "",
+  });
+
+  // Get unique values for dropdown filters
+  const uniqueRoles = useMemo(
+    () => [...new Set(employees.map((e) => e.role))].filter(Boolean).sort(),
+    [employees]
+  );
+
+  const uniqueCompanies = useMemo(
+    () =>
+      [...new Set(employees.map((e) => e.companyId))].filter(Boolean).sort(),
+    [employees]
+  );
+
+  // Filter employees based on current filters
+  const filteredEmployees = useMemo(() => {
+    return employees.filter((employee) => {
+      return (
+        employee.identifier
+          .toLowerCase()
+          .includes(filters.identifier.toLowerCase()) &&
+        employee.name.toLowerCase().includes(filters.name.toLowerCase()) &&
+        employee.role.toLowerCase().includes(filters.role.toLowerCase()) &&
+        (filters.companyId === "" ||
+          employee.companyId === filters.companyId) &&
+        employee.email.toLowerCase().includes(filters.email.toLowerCase())
+      );
+    });
+  }, [employees, filters]);
+
+  const handleFilterChange = (key: keyof EmployeeFilters, value: string) => {
+    setFilters((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const clearFilters = () => {
+    setFilters({
+      identifier: "",
+      name: "",
+      role: "",
+      companyId: "",
+      email: "",
+    });
+  };
+
+  const hasActiveFilters = Object.values(filters).some((value) => value !== "");
 
   // Get company name for display
   const getCompanyName = (companyId: string) => {
@@ -272,12 +348,19 @@ export default function EmployeeList({ companyId }: EmployeeListProps) {
           <h1 className="text-4xl font-bold tracking-tight">
             {companyId ? "Company Employees" : "Colaboradores"}
           </h1>
-          <p className="text-muted-foreground">Gerencie os colaboradores</p>
+          <p className="text-muted-foreground">
+            Gerencie os colaboradores
+            {hasActiveFilters && (
+              <span className="ml-2 text-blue-600">
+                ({filteredEmployees.length} de {employees.length} colaboradores)
+              </span>
+            )}
+          </p>
         </div>
 
         <Dialog open={isCreating} onOpenChange={setIsCreating}>
           <DialogTrigger asChild>
-            <Button className="text-black dark:text-white">
+            <Button className="text-white">
               <Plus className="mr-2 h-4 w-4" />
               Adicionar Colaborador
             </Button>
@@ -301,10 +384,19 @@ export default function EmployeeList({ companyId }: EmployeeListProps) {
       {/* Stats Card */}
       <div className="grid gap-4 md:grid-cols-4">
         <DataCard
-          title="Total de Colaboradores"
+          title={
+            hasActiveFilters
+              ? "Colaboradores Filtrados"
+              : "Total de Colaboradores"
+          }
           icon={<User className="h-4 w-4 text-muted-foreground" />}
         >
-          <div className="text-2xl font-bold">{employees.length}</div>
+          <div className="text-2xl font-bold">{filteredEmployees.length}</div>
+          {hasActiveFilters && (
+            <p className="text-xs text-muted-foreground">
+              de {employees.length} total
+            </p>
+          )}
         </DataCard>
 
         <DataCard
@@ -312,18 +404,149 @@ export default function EmployeeList({ companyId }: EmployeeListProps) {
           icon={<Building className="h-4 w-4 text-muted-foreground" />}
         >
           <div className="text-2xl font-bold">
-            {new Set(employees.map((e) => e.companyId)).size}
+            {new Set(filteredEmployees.map((e) => e.companyId)).size}
+          </div>
+        </DataCard>
+
+        <DataCard
+          title="Cargos Únicos"
+          icon={<User className="h-4 w-4 text-muted-foreground" />}
+        >
+          <div className="text-2xl font-bold">
+            {new Set(filteredEmployees.map((e) => e.role)).size}
           </div>
         </DataCard>
       </div>
 
-      {/* Data Table */}
+      {/* Data Table with Filters */}
       <Card>
-        <CardHeader>
-          <CardTitle>Listagem de Colaboradores</CardTitle>
+        <CardHeader className="pb-4">
+          <div className="flex items-center justify-between">
+            <CardTitle>Listagem de Colaboradores</CardTitle>
+            <div className="flex items-center gap-2">
+              {hasActiveFilters && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={clearFilters}
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  <X className="h-4 w-4 mr-1" />
+                  Limpar Filtros
+                </Button>
+              )}
+              <Collapsible open={isFilterOpen} onOpenChange={setIsFilterOpen}>
+                <CollapsibleTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex items-center gap-2"
+                  >
+                    <Filter className="h-4 w-4" />
+                    Filtros
+                    {hasActiveFilters && (
+                      <Badge variant="secondary" className="ml-1">
+                        {Object.values(filters).filter((v) => v !== "").length}
+                      </Badge>
+                    )}
+                  </Button>
+                </CollapsibleTrigger>
+              </Collapsible>
+            </div>
+          </div>
+
+          {/* Filters Section */}
+          <Collapsible open={isFilterOpen} onOpenChange={setIsFilterOpen}>
+            <CollapsibleContent className="space-y-4 pt-4 border-t">
+              {/* Basic Information Filters */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="filter-identifier">ID</Label>
+                  <Input
+                    id="filter-identifier"
+                    placeholder="Filtrar por ID..."
+                    value={filters.identifier}
+                    onChange={(e) =>
+                      handleFilterChange("identifier", e.target.value)
+                    }
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="filter-name">Nome</Label>
+                  <Input
+                    id="filter-name"
+                    placeholder="Filtrar por nome..."
+                    value={filters.name}
+                    onChange={(e) => handleFilterChange("name", e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="filter-email">Email</Label>
+                  <Input
+                    id="filter-email"
+                    placeholder="Filtrar por email..."
+                    value={filters.email}
+                    onChange={(e) =>
+                      handleFilterChange("email", e.target.value)
+                    }
+                  />
+                </div>
+                <div className="flex gap-4">
+                  <div className="space-y-2">
+                    <Label>Cargo</Label>
+                    <Select
+                      value={filters.role || "all"}
+                      onValueChange={(value) =>
+                        handleFilterChange("role", value === "all" ? "" : value)
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Todos" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Todos</SelectItem>
+                        {uniqueRoles.map((role) => (
+                          <SelectItem key={role} value={role}>
+                            {role}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Empresa</Label>
+                    <Select
+                      value={filters.companyId || "all"}
+                      onValueChange={(value) =>
+                        handleFilterChange(
+                          "companyId",
+                          value === "all" ? "" : value
+                        )
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Todas" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Todas</SelectItem>
+                        {uniqueCompanies.map((companyId) => (
+                          <SelectItem key={companyId} value={companyId}>
+                            {getCompanyName(companyId)}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </div>
+
+              {/* Dropdown Filters */}
+            </CollapsibleContent>
+          </Collapsible>
         </CardHeader>
+
         <CardContent>
-          <DataTable columns={columns} data={employees} />
+          <DataTable columns={columns} data={filteredEmployees} />
         </CardContent>
       </Card>
 
