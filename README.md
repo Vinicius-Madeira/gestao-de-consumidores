@@ -1,4 +1,4 @@
-# Gestão de Contatos
+# Gerenciador de Consumidores
 
 A modern contact and company management system built with Next.js, designed to help you efficiently manage business relationships and energy consumption data.
 
