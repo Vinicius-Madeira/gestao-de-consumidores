@@ -1,11 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useCompanies } from "@/hooks/useCompanies";
 import { Company } from "@/schemas/CompanySchema";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/ui/data-table";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -17,6 +19,9 @@ import {
   Zap,
   DollarSign,
   User,
+  Search,
+  X,
+  Filter,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -45,10 +50,36 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import { IconCurrencyReal } from "@tabler/icons-react";
 import Link from "next/link";
 import { CompanyForm } from "./CompanyForm";
 import { formatConsumption, formatCurrency } from "@/lib/utils";
+
+interface CompanyFilters {
+  name: string;
+  businessName: string;
+  supplier: string;
+  billingRateType: string;
+  responsibleManager: string;
+  minPeakConsumption: string;
+  maxPeakConsumption: string;
+  minOffPeakConsumption: string;
+  maxOffPeakConsumption: string;
+  minInvoiceValue: string;
+  maxInvoiceValue: string;
+}
 
 export default function CompanyList() {
   const {
@@ -58,11 +89,92 @@ export default function CompanyList() {
     createCompany,
     updateCompany,
     deleteCompany,
-    searchCompanies,
   } = useCompanies();
 
   const [isCreating, setIsCreating] = useState(false);
   const [editingCompany, setEditingCompany] = useState<Company | null>(null);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [filters, setFilters] = useState<CompanyFilters>({
+    name: "",
+    businessName: "",
+    supplier: "",
+    billingRateType: "",
+    responsibleManager: "",
+    minPeakConsumption: "",
+    maxPeakConsumption: "",
+    minOffPeakConsumption: "",
+    maxOffPeakConsumption: "",
+    minInvoiceValue: "",
+    maxInvoiceValue: "",
+  });
+
+  // Get unique values for dropdown filters
+  const uniqueSuppliers = useMemo(
+    () => [...new Set(companies.map((c) => c.supplier))].filter(Boolean).sort(),
+    [companies]
+  );
+
+  const uniqueBillingRates = useMemo(
+    () =>
+      [...new Set(companies.map((c) => c.billingRateType))]
+        .filter(Boolean)
+        .sort(),
+    [companies]
+  );
+
+  // Filter companies based on current filters
+  const filteredCompanies = useMemo(() => {
+    return companies.filter((company) => {
+      return (
+        company.name.toLowerCase().includes(filters.name.toLowerCase()) &&
+        company.businessName
+          .toLowerCase()
+          .includes(filters.businessName.toLowerCase()) &&
+        (filters.supplier === "" || company.supplier === filters.supplier) &&
+        (filters.billingRateType === "" ||
+          company.billingRateType === filters.billingRateType) &&
+        company
+          .responsibleManager!.toLowerCase()
+          .includes(filters.responsibleManager.toLowerCase()) &&
+        (filters.minPeakConsumption === "" ||
+          company.peakConsumption >= Number(filters.minPeakConsumption)) &&
+        (filters.maxPeakConsumption === "" ||
+          company.peakConsumption <= Number(filters.maxPeakConsumption)) &&
+        (filters.minOffPeakConsumption === "" ||
+          company.offPeakConsumption >=
+            Number(filters.minOffPeakConsumption)) &&
+        (filters.maxOffPeakConsumption === "" ||
+          company.offPeakConsumption <=
+            Number(filters.maxOffPeakConsumption)) &&
+        (filters.minInvoiceValue === "" ||
+          company.averageInvoiceValue >= Number(filters.minInvoiceValue)) &&
+        (filters.maxInvoiceValue === "" ||
+          company.averageInvoiceValue <= Number(filters.maxInvoiceValue))
+      );
+    });
+  }, [companies, filters]);
+
+  const handleFilterChange = (key: keyof CompanyFilters, value: string) => {
+    setFilters((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const clearFilters = () => {
+    setFilters({
+      name: "",
+      businessName: "",
+      supplier: "",
+      billingRateType: "",
+      responsibleManager: "",
+      minPeakConsumption: "",
+      maxPeakConsumption: "",
+      minOffPeakConsumption: "",
+      maxOffPeakConsumption: "",
+      minInvoiceValue: "",
+      maxInvoiceValue: "",
+    });
+  };
+
+  const hasActiveFilters = Object.values(filters).some((value) => value !== "");
 
   const handleCreate = async (formData: FormData) => {
     const newCompany: Omit<Company, "id"> = {
@@ -299,21 +411,19 @@ export default function CompanyList() {
     );
   }
 
-  // Calculate statistics
-  const totalPeakConsumption = companies.reduce(
+  // Calculate statistics (use filtered companies for stats)
+  const totalPeakConsumption = filteredCompanies.reduce(
     (sum, company) => sum + company.peakConsumption,
     0
   );
-  const totalOffPeakConsumption = companies.reduce(
+  const totalOffPeakConsumption = filteredCompanies.reduce(
     (sum, company) => sum + company.offPeakConsumption,
     0
   );
-  const totalInvoiceValue = companies.reduce(
+  const totalInvoiceValue = filteredCompanies.reduce(
     (sum, company) => sum + company.averageInvoiceValue,
     0
   );
-  const uniqueSuppliers = new Set(companies.map((company) => company.supplier))
-    .size;
 
   return (
     <div className="p-6 space-y-6">
@@ -323,42 +433,54 @@ export default function CompanyList() {
           <h1 className="text-4xl font-bold tracking-tight">Empresas</h1>
           <p className="text-muted-foreground">
             Gerencie empresas e seus dados de consumo de energia
+            {hasActiveFilters && (
+              <span className="ml-2 text-blue-600">
+                ({filteredCompanies.length} de {companies.length} empresas)
+              </span>
+            )}
           </p>
         </div>
 
-        <Dialog open={isCreating} onOpenChange={setIsCreating}>
-          <DialogTrigger asChild>
-            <Button className="text-white">
-              <Plus className="mr-2 h-4 w-4" />
-              Adicionar Empresa
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>Adicionar Nova Empresa</DialogTitle>
-              <DialogDescription>
-                Preencha todos os campos abaixo.
-              </DialogDescription>
-            </DialogHeader>
-            <CompanyForm
-              onSubmit={handleCreate}
-              onCancel={() => setIsCreating(false)}
-            />
-          </DialogContent>
-        </Dialog>
+        <div className="flex gap-2">
+          <Dialog open={isCreating} onOpenChange={setIsCreating}>
+            <DialogTrigger asChild>
+              <Button className="text-white">
+                <Plus className="mr-2 h-4 w-4" />
+                Adicionar Empresa
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle>Adicionar Nova Empresa</DialogTitle>
+                <DialogDescription>
+                  Preencha todos os campos abaixo.
+                </DialogDescription>
+              </DialogHeader>
+              <CompanyForm
+                onSubmit={handleCreate}
+                onCancel={() => setIsCreating(false)}
+              />
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
 
-      {/* Stats Cards */}
+      {/* Stats Cards - now showing filtered data */}
       <div className="grid gap-4 md:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Total de Empresas
+              {hasActiveFilters ? "Empresas Filtradas" : "Total de Empresas"}
             </CardTitle>
             <Building className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{companies.length}</div>
+            <div className="text-2xl font-bold">{filteredCompanies.length}</div>
+            {hasActiveFilters && (
+              <p className="text-xs text-muted-foreground">
+                de {companies.length} total
+              </p>
+            )}
           </CardContent>
         </Card>
 
@@ -405,13 +527,212 @@ export default function CompanyList() {
         </Card>
       </div>
 
-      {/* Data Table */}
+      {/* Data Table with Filters */}
       <Card>
-        <CardHeader>
-          <CardTitle>Listagem de Empresas</CardTitle>
+        <CardHeader className="pb-4">
+          <div className="flex items-center justify-between">
+            <CardTitle>Listagem de Empresas</CardTitle>
+            <div className="flex items-center gap-2">
+              {hasActiveFilters && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={clearFilters}
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  <X className="h-4 w-4 mr-1" />
+                  Limpar Filtros
+                </Button>
+              )}
+              <Collapsible open={isFilterOpen} onOpenChange={setIsFilterOpen}>
+                <CollapsibleTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex items-center gap-2"
+                  >
+                    <Filter className="h-4 w-4" />
+                    Filtros
+                    {hasActiveFilters && (
+                      <Badge variant="secondary" className="ml-1">
+                        {Object.values(filters).filter((v) => v !== "").length}
+                      </Badge>
+                    )}
+                  </Button>
+                </CollapsibleTrigger>
+              </Collapsible>
+            </div>
+          </div>
+
+          {/* Filters Section */}
+          <Collapsible open={isFilterOpen} onOpenChange={setIsFilterOpen}>
+            <CollapsibleContent className="space-y-4 pt-4 border-t">
+              {/* Basic Information Filters */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="filter-name">Nome da Empresa</Label>
+                  <Input
+                    id="filter-name"
+                    placeholder="Filtrar por nome..."
+                    value={filters.name}
+                    onChange={(e) => handleFilterChange("name", e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="filter-business-name">Razão Social</Label>
+                  <Input
+                    id="filter-business-name"
+                    placeholder="Filtrar por razão social..."
+                    value={filters.businessName}
+                    onChange={(e) =>
+                      handleFilterChange("businessName", e.target.value)
+                    }
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="filter-responsible">Responsável</Label>
+                  <Input
+                    id="filter-responsible"
+                    placeholder="Filtrar por responsável..."
+                    value={filters.responsibleManager}
+                    onChange={(e) =>
+                      handleFilterChange("responsibleManager", e.target.value)
+                    }
+                  />
+                </div>
+                <div id="select boxes" className="flex justify-center gap-8">
+                  <div className="space-y-2">
+                    <Label>Distribuidora</Label>
+                    <Select
+                      value={filters.supplier || "all"}
+                      onValueChange={(value) =>
+                        handleFilterChange(
+                          "supplier",
+                          value === "all" ? "" : value
+                        )
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Todas" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Todas</SelectItem>
+                        {uniqueSuppliers.map((supplier) => (
+                          <SelectItem key={supplier} value={supplier}>
+                            {supplier}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Modalidade Tarifária</Label>
+                    <Select
+                      value={filters.billingRateType || "all"}
+                      onValueChange={(value) =>
+                        handleFilterChange(
+                          "billingRateType",
+                          value === "all" ? "" : value
+                        )
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Todas" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Todas</SelectItem>
+                        {uniqueBillingRates.map((rate) => (
+                          <SelectItem key={rate} value={rate}>
+                            {rate}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </div>
+
+              {/* Dropdown Filters */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+
+              {/* Range Filters */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <Label>Consumo de Ponta (kWh)</Label>
+                  <div className="flex gap-2">
+                    <Input
+                      type="number"
+                      placeholder="Min"
+                      value={filters.minPeakConsumption}
+                      onChange={(e) =>
+                        handleFilterChange("minPeakConsumption", e.target.value)
+                      }
+                    />
+                    <Input
+                      type="number"
+                      placeholder="Max"
+                      value={filters.maxPeakConsumption}
+                      onChange={(e) =>
+                        handleFilterChange("maxPeakConsumption", e.target.value)
+                      }
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label>Consumo Fora de Ponta (kWh)</Label>
+                  <div className="flex gap-2">
+                    <Input
+                      type="number"
+                      placeholder="Min"
+                      value={filters.minOffPeakConsumption}
+                      onChange={(e) =>
+                        handleFilterChange(
+                          "minOffPeakConsumption",
+                          e.target.value
+                        )
+                      }
+                    />
+                    <Input
+                      type="number"
+                      placeholder="Max"
+                      value={filters.maxOffPeakConsumption}
+                      onChange={(e) =>
+                        handleFilterChange(
+                          "maxOffPeakConsumption",
+                          e.target.value
+                        )
+                      }
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label>Valor Médio da Fatura (R$)</Label>
+                  <div className="flex gap-2">
+                    <Input
+                      type="number"
+                      placeholder="Min"
+                      value={filters.minInvoiceValue}
+                      onChange={(e) =>
+                        handleFilterChange("minInvoiceValue", e.target.value)
+                      }
+                    />
+                    <Input
+                      type="number"
+                      placeholder="Max"
+                      value={filters.maxInvoiceValue}
+                      onChange={(e) =>
+                        handleFilterChange("maxInvoiceValue", e.target.value)
+                      }
+                    />
+                  </div>
+                </div>
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
         </CardHeader>
+
         <CardContent>
-          <DataTable columns={columns} data={companies} />
+          <DataTable columns={columns} data={filteredCompanies} />
         </CardContent>
       </Card>
 
