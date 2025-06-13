@@ -19,11 +19,13 @@ import { EmployeeCsv } from "@/schemas/EmployeeSchema";
 
 interface FileUploaderProps {
   onFilesChange?: (files: File[]) => void;
+  onImportComplete?: () => void; // Add callback for when import is complete
   acceptedTypes?: string[];
 }
 
 export default function FileUploader({
   onFilesChange,
+  onImportComplete,
   acceptedTypes = [".csv", ".xlsx"],
 }: FileUploaderProps) {
   const [file, setFile] = useState<File | null>(null);
@@ -130,6 +132,9 @@ export default function FileUploader({
       toast.success(
         `${parsedData.companies.length} empresas e ${parsedData.employees.length} colaboradores importados com sucesso!`
       );
+
+      // Call the callback to refresh data in parent components
+      onImportComplete?.();
 
       setIsDialogOpen(false);
       setFile(null);

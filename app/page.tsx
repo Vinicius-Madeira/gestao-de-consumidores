@@ -14,8 +14,22 @@ import { Button } from "@/components/ui/button";
 export const dynamic = "force-static";
 
 export default function DashboardPage() {
-  const { companies, loading: companiesLoading } = useCompanies();
-  const { employees, loading: employeesLoading } = useEmployees();
+  const {
+    companies,
+    loading: companiesLoading,
+    refreshCompanies,
+  } = useCompanies();
+  const {
+    employees,
+    loading: employeesLoading,
+    refreshEmployees,
+  } = useEmployees();
+
+  const handleImportComplete = () => {
+    // Refresh both companies and employees data
+    refreshCompanies();
+    refreshEmployees();
+  };
 
   if (companiesLoading || employeesLoading) {
     return (
@@ -65,7 +79,7 @@ export default function DashboardPage() {
           <div>
             <h1 className="text-4xl font-bold tracking-tight">Dashboard</h1>
             <p className="text-muted-foreground">
-              Visão geral de empresas e contatos
+              Visão geral do sistema de gestão de contatos e empresas
             </p>
           </div>
           <div className="flex gap-2">
@@ -81,7 +95,7 @@ export default function DashboardPage() {
                 Ver Colaboradores
               </Button>
             </Link>
-            <FileUploader />
+            <FileUploader onImportComplete={handleImportComplete} />
           </div>
         </div>
 
