@@ -10,6 +10,7 @@ import { IconCurrencyReal } from "@tabler/icons-react";
 import { formatConsumption, formatCurrency } from "@/lib/utils";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import DataCard from "@/components/data-card";
 
 export const dynamic = "force-static";
 
@@ -101,129 +102,88 @@ export default function DashboardPage() {
 
         {/* Main Statistics Cards */}
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Total de Empresas
-              </CardTitle>
-              <Building className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{companies.length}</div>
-            </CardContent>
-          </Card>
+          <DataCard
+            title="Total de Empresas"
+            icon={<Building className="h-4 w-4 text-muted-foreground" />}
+          >
+            <div className="text-2xl font-bold">{companies.length}</div>
+          </DataCard>
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Total de Colaboradores
-              </CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{employees.length}</div>
-            </CardContent>
-          </Card>
+          <DataCard
+            title="Total de Colaboradores"
+            icon={<Users className="h-4 w-4 text-muted-foreground" />}
+          >
+            <div className="text-2xl font-bold">{employees.length}</div>
+          </DataCard>
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Cidades Presentes
-              </CardTitle>
-              <TrendingUp className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{uniqueCities}</div>
-            </CardContent>
-          </Card>
+          <DataCard
+            title="Cidades Presentes"
+            icon={<TrendingUp className="h-4 w-4 text-muted-foreground" />}
+          >
+            <div className="text-2xl font-bold">{uniqueCities}</div>
+          </DataCard>
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Distribuidoras
-              </CardTitle>
-              <Activity className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{uniqueSuppliers}</div>
-            </CardContent>
-          </Card>
+          <DataCard
+            title="Distribuidoras"
+            icon={<Activity className="h-4 w-4 text-muted-foreground" />}
+          >
+            <div className="text-2xl font-bold">{uniqueSuppliers}</div>
+          </DataCard>
         </div>
 
         {/* Energy Consumption Overview */}
         <div className="grid gap-4 md:grid-cols-3">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Consumo de Ponta
-              </CardTitle>
-              <Zap className="h-4 w-4 text-orange-500" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                {formatConsumption(totalPeakConsumption)}
+          <DataCard
+            title="Consumo Total de Energia"
+            icon={<Zap className="h-4 w-4 text-orange-500" />}
+          >
+            <div className="text-2xl font-bold">
+              {formatConsumption(totalPeakConsumption)}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Total de todas as empresas
+            </p>
+            <div className="mt-2 pt-2 border-t">
+              <div className="text-lg font-semibold text-muted-foreground">
+                {formatConsumption(averagePeakConsumption)}
               </div>
-              <p className="text-xs text-muted-foreground">
-                Total de todas as empresas
-              </p>
-              <div className="mt-2 pt-2 border-t">
-                <div className="text-lg font-semibold text-muted-foreground">
-                  {formatConsumption(averagePeakConsumption)}
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Média por empresa
-                </p>
-              </div>
-            </CardContent>
-          </Card>
+              <p className="text-xs text-muted-foreground">Média por empresa</p>
+            </div>
+          </DataCard>
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Consumo Fora de Ponta
-              </CardTitle>
-              <Zap className="h-4 w-4 text-blue-500" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                {formatConsumption(totalOffPeakConsumption)}
+          <DataCard
+            title="Consumo de Ponta"
+            icon={<Zap className="h-4 w-4 text-blue-500" />}
+          >
+            <div className="text-2xl font-bold">
+              {formatConsumption(totalOffPeakConsumption)}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Total de todas as empresas
+            </p>
+            <div className="mt-2 pt-2 border-t">
+              <div className="text-lg font-semibold text-muted-foreground">
+                {formatConsumption(averageOffPeakConsumption)}
               </div>
-              <p className="text-xs text-muted-foreground">
-                Total de todas as empresas
-              </p>
-              <div className="mt-2 pt-2 border-t">
-                <div className="text-lg font-semibold text-muted-foreground">
-                  {formatConsumption(averageOffPeakConsumption)}
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Média por empresa
-                </p>
-              </div>
-            </CardContent>
-          </Card>
+              <p className="text-xs text-muted-foreground">Média por empresa</p>
+            </div>
+          </DataCard>
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Valor das Faturas
-              </CardTitle>
-              <IconCurrencyReal className="h-4 w-4 text-green-500" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                {formatCurrency(totalInvoiceValue)}
+          <DataCard
+            title="Valor das Faturas"
+            icon={<IconCurrencyReal className="h-4 w-4 text-green-500" />}
+          >
+            <div className="text-2xl font-bold">
+              {formatCurrency(totalInvoiceValue)}
+            </div>
+            <p className="text-xs text-muted-foreground">Soma das faturas</p>
+            <div className="mt-2 pt-2 border-t">
+              <div className="text-lg font-semibold text-muted-foreground">
+                {formatCurrency(averageInvoiceValue)}
               </div>
-              <p className="text-xs text-muted-foreground">Soma das faturas</p>
-              <div className="mt-2 pt-2 border-t">
-                <div className="text-lg font-semibold text-muted-foreground">
-                  {formatCurrency(averageInvoiceValue)}
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Média por empresa
-                </p>
-              </div>
-            </CardContent>
-          </Card>
+              <p className="text-xs text-muted-foreground">Média por empresa</p>
+            </div>
+          </DataCard>
         </div>
 
         {/* Recent Companies and Employees Overview */}

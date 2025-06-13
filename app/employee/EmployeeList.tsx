@@ -47,6 +47,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { EmployeeForm } from "./EmployeeForm";
+import DataCard from "@/components/data-card";
 
 interface EmployeeListProps {
   companyId?: string;
@@ -299,31 +300,21 @@ export default function EmployeeList({ companyId }: EmployeeListProps) {
 
       {/* Stats Card */}
       <div className="grid gap-4 md:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Total de Colaboradores
-            </CardTitle>
-            <User className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{employees.length}</div>
-          </CardContent>
-        </Card>
+        <DataCard
+          title="Total de Colaboradores"
+          icon={<User className="h-4 w-4 text-muted-foreground" />}
+        >
+          <div className="text-2xl font-bold">{employees.length}</div>
+        </DataCard>
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Total de Empresas
-            </CardTitle>
-            <Building className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {new Set(employees.map((e) => e.companyId)).size}
-            </div>
-          </CardContent>
-        </Card>
+        <DataCard
+          title="Total de Empresas"
+          icon={<Building className="h-4 w-4 text-muted-foreground" />}
+        >
+          <div className="text-2xl font-bold">
+            {new Set(employees.map((e) => e.companyId)).size}
+          </div>
+        </DataCard>
       </div>
 
       {/* Data Table */}
