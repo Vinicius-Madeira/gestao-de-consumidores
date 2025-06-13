@@ -1,13 +1,21 @@
 "use client";
-import React, {
-  useState,
-  useRef,
-  DragEvent,
-  ChangeEvent,
-  useEffect,
-} from "react";
-import { Upload, X, File } from "lucide-react";
+import React, { useState, useRef, ChangeEvent, useEffect } from "react";
+import { Upload } from "lucide-react";
 import { useFetchCsv } from "@/hooks/useFetchCsv";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "./ui/dialog";
+import { Button } from "./ui/button";
+import { getAllCompaniesFromCsv, getAllEmployeesFromCsv } from "@/lib/utils";
+import { companyOperations, employeeOperations } from "@/lib/dexie/db";
+import { toast } from "sonner";
+import { CompanyCsv } from "@/schemas/CompanySchema";
+import { EmployeeCsv } from "@/schemas/EmployeeSchema";
 
 interface FileUploaderProps {
   onFilesChange?: (files: File[]) => void;
@@ -18,9 +26,14 @@ export default function FileUploader({
   onFilesChange,
   acceptedTypes = [".csv", ".xlsx"],
 }: FileUploaderProps) {
-  const [files, setFiles] = useState<File[]>([]);
-  const [isDragOver, setIsDragOver] = useState(false);
-  const [error, setError] = useState<string>("");
+  const [file, setFile] = useState<File | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isParsing, setIsParsing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [parsedData, setParsedData] = useState<{
+    companies: CompanyCsv[];
+    employees: EmployeeCsv[];
+  } | null>(null);
   const { csvData, parseCsv, resetCsvData } = useFetchCsv();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -34,146 +47,219 @@ export default function FileUploader({
       });
 
       if (!isValidType) {
-        return `File ${file.name} is not a supported format`;
+        return `Arquivo ${file.name} não é um formato suportado`;
       }
     }
 
     return null;
   };
 
-  const processFiles = (fileList: FileList) => {
-    const file = fileList[0];
-    if (!file) return;
+  const handleFileSelect = (e: ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0];
+    if (!selectedFile) return;
 
-    const validationError = validateFile(file);
+    const validationError = validateFile(selectedFile);
     if (validationError) {
-      setError(validationError);
-      setTimeout(() => setError(""), 3000);
+      toast.error(validationError);
       return;
     }
 
-    // Replace the current file since we only allow 1
-    setFiles([file]);
-    onFilesChange?.([file]);
+    setFile(selectedFile);
+    setIsDialogOpen(true);
+    setIsParsing(true);
+    onFilesChange?.([selectedFile]);
   };
 
-  const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    setIsDragOver(true);
+  const openFileSelector = () => {
+    fileInputRef.current?.click();
   };
 
-  const handleDragLeave = (e: DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    setIsDragOver(false);
-  };
-
-  const handleDrop = (e: DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    setIsDragOver(false);
-
-    const droppedFiles = e.dataTransfer.files;
-    if (droppedFiles.length > 0) {
-      processFiles(droppedFiles);
-    }
-  };
-
-  const handleFileSelect = (e: ChangeEvent<HTMLInputElement>) => {
-    const selectedFiles = e.target.files;
-    if (selectedFiles && selectedFiles.length > 0) {
-      processFiles(selectedFiles);
-    }
-  };
-
-  const removeFile = () => {
-    setFiles([]);
+  const handleCancel = () => {
+    setIsDialogOpen(false);
+    setFile(null);
+    setParsedData(null);
+    resetCsvData();
     onFilesChange?.([]);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
   };
 
-  useEffect(() => {
-    console.log("useEffect");
-    if (files.length === 0) {
-      resetCsvData();
-    }
-    if (files.length > 0) {
-      setError("");
-      parseCsv(files[0]);
-    }
+  const handleConfirm = async () => {
+    if (!parsedData) return;
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [files]);
+    setIsSaving(true);
+    try {
+      // Save companies first
+      for (const company of parsedData.companies) {
+        await companyOperations.create({
+          addressNumber: company.Numero.toString(),
+          averageInvoiceValue: company.Valor_Medio_Fatura,
+          billingRateType: company.Modalidade_Tarifaria,
+          businessName: company.Razao_Social,
+          cnpj: company.Cnpj,
+          city: company.Cidade,
+          state: company.Estado,
+          name: company.Empresa,
+          zipCode: company.Cep.toString(),
+          offPeakConsumption: company.Consumo_Fora_Ponta,
+          peakConsumption: company.Consumo_Ponta,
+          street: company.Rua,
+          supplier: company.Distribuidora,
+          responsibleManager: company.Gestor_Responsavel,
+        });
+      }
+
+      // Save employees if available
+      if (parsedData.employees.length > 0) {
+        for (const employee of parsedData.employees) {
+          const company = await companyOperations.searchByName(
+            employee.Empresa
+          );
+          await employeeOperations.create({
+            identifier: employee.Identificador,
+            name: employee.Nome,
+            role: employee.Cargo,
+            companyId: company[0].id,
+            phoneNumber: employee.Telefone,
+            email: employee.Email,
+          });
+        }
+      }
+
+      toast.success(
+        `${parsedData.companies.length} empresas e ${parsedData.employees.length} colaboradores importados com sucesso!`
+      );
+
+      setIsDialogOpen(false);
+      setFile(null);
+      setParsedData(null);
+      resetCsvData();
+
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    } catch (error) {
+      console.error("Error saving data:", error);
+      toast.error("Erro ao salvar os dados no banco");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  // Parse CSV data when it's available
+  useEffect(() => {
+    if (csvData.length > 0 && isParsing) {
+      try {
+        const companyData = getAllCompaniesFromCsv(csvData[1]) || [];
+        const employeeData = getAllEmployeesFromCsv(csvData[0]) || [];
+
+        setParsedData({
+          companies: companyData,
+          employees: employeeData,
+        });
+
+        setIsParsing(false);
+      } catch (error) {
+        console.error("Error parsing CSV data:", error);
+        toast.error("Erro ao processar o arquivo CSV");
+        setIsParsing(false);
+        setIsDialogOpen(false);
+      }
+    }
+  }, [csvData, isParsing]);
+
+  // Start parsing when file is selected
+  useEffect(() => {
+    if (file && isDialogOpen) {
+      parseCsv(file);
+    }
+  }, [file, isDialogOpen, parseCsv]);
 
   return (
-    <div className="w-full max-w-2xl mx-auto p-6">
-      {/* Upload Area */}
-      <div
-        className={`
-          relative border-2 border-dashed rounded-lg p-8 text-center transition-all duration-200 cursor-pointer
-          ${
-            isDragOver
-              ? "border-blue-500 bg-blue-50 dark:bg-blue-950/20"
-              : "border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500"
-          }
-          ${files.length >= 1 ? "opacity-50 cursor-not-allowed" : ""}
-        `}
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-        onDrop={handleDrop}
-        onClick={() => files.length < 1 && fileInputRef.current?.click()}
+    <>
+      <input
+        ref={fileInputRef}
+        type="file"
+        className="hidden"
+        accept={acceptedTypes.join(",")}
+        onChange={handleFileSelect}
+      />
+
+      <Button
+        onClick={openFileSelector}
+        className="flex items-center gap-2 text-white"
       >
-        <input
-          ref={fileInputRef}
-          type="file"
-          className="hidden"
-          accept={acceptedTypes.join(",")}
-          onChange={handleFileSelect}
-          multiple={false}
-          disabled={files.length >= 1}
-        />
+        <Upload className="h-4 w-4" />
+        Importar CSV
+      </Button>
 
-        <Upload className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-        <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
-          {isDragOver ? "Solte o arquivo aqui" : "Enviar arquivo"}
-        </h3>
-        <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
-          Arraste e solte um arquivo aqui ou clique para selecionar
-        </p>
-        <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
-          Formatos suportados: {acceptedTypes.join(", ")}
-        </p>
-      </div>
+      <Dialog
+        open={isDialogOpen}
+        onOpenChange={() => !isSaving && handleCancel()}
+      >
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Importar Dados do CSV</DialogTitle>
+            <DialogDescription>
+              {file && `Arquivo: ${file.name}`}
+            </DialogDescription>
+          </DialogHeader>
 
-      {/* Error Message */}
-      {error && (
-        <div className="mt-4 p-3 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-md">
-          <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
-        </div>
-      )}
-
-      {/* File Display */}
-      {files.length > 0 && (
-        <div className="mt-6">
-          <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-3">
-            Arquivo selecionado
-          </h4>
-          <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
-            <div className="flex items-center space-x-3 flex-1 min-w-0">
-              <File className="w-10 h-10 text-gray-400" />
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
-                  {files[0].name}
+          <div className="py-4">
+            {isParsing ? (
+              <div className="flex items-center justify-center space-x-2">
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+                <span>Processando arquivo...</span>
+              </div>
+            ) : parsedData ? (
+              <div className="space-y-3">
+                <div className="flex justify-between items-center p-3 bg-blue-50 dark:bg-blue-950/20 rounded-lg">
+                  <span className="font-medium">Empresas encontradas:</span>
+                  <span className="text-lg font-bold text-blue-600">
+                    {parsedData.companies.length}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center p-3 bg-green-50 dark:bg-green-950/20 rounded-lg">
+                  <span className="font-medium">
+                    Colaboradores encontrados:
+                  </span>
+                  <span className="text-lg font-bold text-green-600">
+                    {parsedData.employees.length}
+                  </span>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  Confirme para importar estes dados para o sistema.
                 </p>
               </div>
-            </div>
-            <button
-              onClick={removeFile}
-              className="ml-3 p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full transition-colors"
-              aria-label={`Remove ${files[0].name}`}
-            >
-              <X className="w-4 h-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300" />
-            </button>
+            ) : null}
           </div>
-        </div>
-      )}
-    </div>
+
+          <DialogFooter className="flex gap-2">
+            <Button
+              variant="outline"
+              onClick={handleCancel}
+              disabled={isSaving}
+            >
+              Cancelar
+            </Button>
+            <Button
+              onClick={handleConfirm}
+              disabled={isParsing || !parsedData || isSaving}
+              className="text-white"
+            >
+              {isSaving ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  Salvando...
+                </>
+              ) : (
+                "Confirmar Importação"
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }

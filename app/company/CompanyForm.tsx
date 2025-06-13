@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Company } from "@/lib/dexie/db";
+import { Company } from "@/schemas/CompanySchema";
 
 export const CompanyForm = ({
   company,

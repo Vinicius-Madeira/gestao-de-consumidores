@@ -1,7 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Employee, Company, employeeOperations } from "@/lib/dexie/db";
+import { Company } from "@/schemas/CompanySchema";
+import { Employee } from "@/schemas/EmployeeSchema";
+import { employeeOperations } from "@/lib/dexie/db";
 
 type EmployeeWithCompany = Employee & { company?: Company };
 

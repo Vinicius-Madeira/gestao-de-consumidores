@@ -1,54 +1,31 @@
 import Dexie, { Table } from "dexie";
+import { hashString } from "../utils";
+import { Company } from "@/schemas/CompanySchema";
+import { Employee } from "@/schemas/EmployeeSchema";
 
-export interface Company {
-  id?: number; // Chave primária auto-incrementável
-  name: string;
-  street: string;
-  addressNumber: string;
-  state: string;
-  city: string;
-  zipCode: string;
-  businessName: string;
-  cnpj: string;
-  supplier: string;
-  billingRateType: string;
-  peakConsumption: number; // kWh
-  offPeakConsumption: number; // kWh
-  averageInvoiceValue: number; // R$
-  responsibleManager: string; // May or may not exist, as it relates to an employee
-}
-
-export interface Employee {
-  id?: number; // Chave primária auto-incrementável
-  identifier: string;
-  name: string;
-  role: string;
-  companyId: number; // Chave estrangeira para a tabela empresas
-  phoneNumber: string;
-  email: string;
-}
-
-export class MyAppDatabase extends Dexie {
+export class GCDatabase extends Dexie {
   companies!: Table<Company>;
   employees!: Table<Employee>;
 
   constructor() {
-    super("MyAppDatabase");
+    super("GCDatabase");
     this.version(1).stores({
       companies:
-        "++id, name, cnpj, supplier, billingRateType, responsibleManager",
-      employees: "++id, identifier, name, role, companyId, phoneNumber, email",
+        "id, name, cnpj, supplier, billingRateType, responsibleManager",
+      employees: "id, identifier, name, role, companyId, phoneNumber, email",
     });
   }
 }
 
-export const db = new MyAppDatabase();
+export const db = new GCDatabase();
 
 // CRUD Operations for Companies
 export const companyOperations = {
   // Create
-  async create(company: Omit<Company, "id">): Promise<number> {
-    return await db.companies.add(company);
+  async create(company: Omit<Company, "id">): Promise<string> {
+    const id = await hashString(company.cnpj);
+    await db.companies.add({ ...company, id }); // maybe switch to put to allow overwrite
+    return id;
   },
 
   // Read all
@@ -57,7 +34,7 @@ export const companyOperations = {
   },
 
   // Read by ID
-  async getById(id: number): Promise<Company | undefined> {
+  async getById(id: string): Promise<Company | undefined> {
     return await db.companies.get(id);
   },
 
@@ -67,17 +44,17 @@ export const companyOperations = {
   },
 
   // Update
-  async update(id: number, changes: Partial<Company>): Promise<number> {
+  async update(id: string, changes: Partial<Company>): Promise<number> {
     return await db.companies.update(id, changes);
   },
 
   // Delete
-  async delete(id: number): Promise<void> {
+  async delete(id: string): Promise<void> {
     await db.companies.delete(id);
   },
 
   // Delete multiple
-  async deleteMultiple(ids: number[]): Promise<void> {
+  async deleteMultiple(ids: string[]): Promise<void> {
     await db.companies.bulkDelete(ids);
   },
 
@@ -98,8 +75,10 @@ export const companyOperations = {
 // CRUD Operations for Employees
 export const employeeOperations = {
   // Create
-  async create(employee: Omit<Employee, "id">): Promise<number> {
-    return await db.employees.add(employee);
+  async create(employee: Omit<Employee, "id">): Promise<string> {
+    const id = await hashString(`${employee.name}-${employee.companyId}`);
+    await db.employees.add({ ...employee, id });
+    return id;
   },
 
   // Read all
@@ -108,12 +87,12 @@ export const employeeOperations = {
   },
 
   // Read by ID
-  async getById(id: number): Promise<Employee | undefined> {
+  async getById(id: string): Promise<Employee | undefined> {
     return await db.employees.get(id);
   },
 
   // Read by company ID
-  async getByCompanyId(companyId: number): Promise<Employee[]> {
+  async getByCompanyId(companyId: string): Promise<Employee[]> {
     return await db.employees.where("companyId").equals(companyId).toArray();
   },
 
@@ -123,17 +102,17 @@ export const employeeOperations = {
   },
 
   // Update
-  async update(id: number, changes: Partial<Employee>): Promise<number> {
+  async update(id: string, changes: Partial<Employee>): Promise<number> {
     return await db.employees.update(id, changes);
   },
 
   // Delete
-  async delete(id: number): Promise<void> {
+  async delete(id: string): Promise<void> {
     await db.employees.delete(id);
   },
 
   // Delete by company ID (when deleting a company)
-  async deleteByCompanyId(companyId: number): Promise<void> {
+  async deleteByCompanyId(companyId: string): Promise<void> {
     await db.employees.where("companyId").equals(companyId).delete();
   },
 
@@ -148,7 +127,7 @@ export const employeeOperations = {
   // Get employees with company data (JOIN-like operation)
   async getWithCompanyData(): Promise<(Employee & { company?: Company })[]> {
     const employees = await db.employees.toArray();
-    const companiesMap = new Map<number, Company>();
+    const companiesMap = new Map<string, Company>();
 
     // Get all unique company IDs
     const companyIds = [...new Set(employees.map((emp) => emp.companyId))];

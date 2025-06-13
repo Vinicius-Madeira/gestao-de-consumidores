@@ -4,6 +4,7 @@ import "./globals.css";
 import { Sidebar } from "@/components/sidebar";
 import { ThemeProvider } from "@/components/theme-provider";
 import PWAHandler from "@/components/pwa-handler";
+import { Toaster } from "sonner";
 
 const zenOldMincho = Zen_Old_Mincho({
   variable: "--font-zen-old-mincho",
@@ -38,6 +39,7 @@ export default function RootLayout({
             <main className="flex flex-col flex-grow">{children}</main>
           </Sidebar>
           <PWAHandler />
+          <Toaster richColors position="top-center" />
         </ThemeProvider>
       </body>
     </html>

@@ -81,6 +81,7 @@ export default function DashboardPage() {
                 Ver Colaboradores
               </Button>
             </Link>
+            <FileUploader />
           </div>
         </div>
 
@@ -319,8 +320,6 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
         </div>
-
-        <FileUploader />
       </div>
     </main>
   );

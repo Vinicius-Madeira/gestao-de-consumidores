@@ -8,7 +8,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Company, Employee } from "@/lib/dexie/db";
+import { Company } from "@/schemas/CompanySchema";
+import { Employee } from "@/schemas/EmployeeSchema";
 
 export const EmployeeForm = ({
   employee,

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useCompanies } from "@/hooks/useCompanies";
-import { Company } from "@/lib/dexie/db";
+import { Company } from "@/schemas/CompanySchema";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/ui/data-table";
 import { Button } from "@/components/ui/button";
@@ -118,7 +118,7 @@ export default function CompanyList() {
     }
   };
 
-  const handleDelete = async (companyId: number) => {
+  const handleDelete = async (companyId: string) => {
     try {
       await deleteCompany(companyId);
     } catch (error) {

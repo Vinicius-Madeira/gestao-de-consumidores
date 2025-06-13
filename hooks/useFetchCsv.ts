@@ -2,7 +2,7 @@ import { useState } from "react";
 import { read, utils } from "xlsx";
 
 export function useFetchCsv() {
-  const [tables, setTables] = useState<Record<string, any[]> | null>(null);
+  const [tables, setTables] = useState<any[][]>([]);
 
   async function parseCsv(file: File) {
     if (!file) return;
@@ -65,9 +65,9 @@ export function useFetchCsv() {
         }
 
         const headerRow = raw[0];
-        const parsedTables: Record<string, any[]> = {};
+        const parsedTables: any[][] = [];
 
-        columnGroups.forEach((group, index) => {
+        columnGroups.forEach((group) => {
           const headers = group.map((i) => headerRow[i]);
 
           const rows = raw.slice(1).reduce((acc, row) => {
@@ -91,7 +91,7 @@ export function useFetchCsv() {
             return acc;
           }, [] as Record<string, any>[]);
 
-          parsedTables[`table${index + 1}`] = rows;
+          parsedTables.push(rows);
         });
 
         setTables(parsedTables);
@@ -103,8 +103,8 @@ export function useFetchCsv() {
     reader[readType](file);
   }
 
-  function resetCsvData() {
-    setTables(null);
+  async function resetCsvData() {
+    setTables([]);
   }
 
   return { csvData: tables, parseCsv, resetCsvData };

@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Company, companyOperations } from "@/lib/dexie/db";
+import { Company } from "@/schemas/CompanySchema";
+import { companyOperations } from "@/lib/dexie/db";
 
 export const useCompanies = () => {
   const [companies, setCompanies] = useState<Company[]>([]);
@@ -34,7 +35,7 @@ export const useCompanies = () => {
     }
   };
 
-  const updateCompany = async (id: number, changes: Partial<Company>) => {
+  const updateCompany = async (id: string, changes: Partial<Company>) => {
     try {
       setError(null);
       await companyOperations.update(id, changes);
@@ -49,7 +50,7 @@ export const useCompanies = () => {
     }
   };
 
-  const deleteCompany = async (id: number) => {
+  const deleteCompany = async (id: string) => {
     try {
       setError(null);
       await companyOperations.delete(id);

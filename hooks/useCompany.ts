@@ -1,14 +1,15 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Company, companyOperations } from "@/lib/dexie/db";
+import { Company } from "@/schemas/CompanySchema";
+import { companyOperations } from "@/lib/dexie/db";
 
-export const useCompany = (id?: number) => {
+export const useCompany = (id?: string) => {
   const [company, setCompany] = useState<Company | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const loadCompany = async (companyId: number) => {
+  const loadCompany = async (companyId: string) => {
     try {
       setLoading(true);
       setError(null);

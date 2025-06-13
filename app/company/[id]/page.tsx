@@ -14,7 +14,8 @@ import { useCompany } from "@/hooks/useCompany";
 import { useParams } from "next/navigation";
 import { CompanyForm } from "../CompanyForm";
 import { useState } from "react";
-import { Company, Employee } from "@/lib/dexie/db";
+import { Company } from "@/schemas/CompanySchema";
+import { Employee } from "@/schemas/EmployeeSchema";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Building,
@@ -59,18 +60,18 @@ import { Badge } from "@/components/ui/badge";
 import { EmployeeForm } from "@/app/employee/EmployeeForm";
 
 export default function Page() {
-  const params = useParams();
+  const { id } = useParams();
   const {
     company,
     updateCompany,
     loading: companyLoading,
-  } = useCompany(Number(params.id));
+  } = useCompany(id as string);
   const {
     employees,
     updateEmployee,
     deleteEmployee,
     loading: employeesLoading,
-  } = useEmployees(Number(params.id));
+  } = useEmployees(id as string);
   const [editingCompany, setEditingCompany] = useState(false);
   const [editingEmployee, setEditingEmployee] = useState<Employee | null>(null);
 
@@ -107,7 +108,7 @@ export default function Page() {
       identifier: formData.get("identifier") as string,
       name: formData.get("name") as string,
       role: formData.get("role") as string,
-      companyId: Number(formData.get("companyId")),
+      companyId: formData.get("companyId") as string,
       phoneNumber: formData.get("phoneNumber") as string,
       email: formData.get("email") as string,
     };
@@ -120,7 +121,7 @@ export default function Page() {
     }
   }
 
-  const handleEmployeeDelete = async (employeeId: number) => {
+  const handleEmployeeDelete = async (employeeId: string) => {
     try {
       await deleteEmployee(employeeId);
     } catch (error) {

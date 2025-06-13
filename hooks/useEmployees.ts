@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Employee, employeeOperations } from "@/lib/dexie/db";
+import { Employee } from "@/schemas/EmployeeSchema";
+import { employeeOperations } from "@/lib/dexie/db";
 
-export const useEmployees = (companyId?: number) => {
+export const useEmployees = (companyId?: string) => {
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -38,7 +39,7 @@ export const useEmployees = (companyId?: number) => {
     }
   };
 
-  const updateEmployee = async (id: number, changes: Partial<Employee>) => {
+  const updateEmployee = async (id: string, changes: Partial<Employee>) => {
     try {
       setError(null);
       await employeeOperations.update(id, changes);
@@ -55,7 +56,7 @@ export const useEmployees = (companyId?: number) => {
     }
   };
 
-  const deleteEmployee = async (id: number) => {
+  const deleteEmployee = async (id: string) => {
     try {
       setError(null);
       await employeeOperations.delete(id);

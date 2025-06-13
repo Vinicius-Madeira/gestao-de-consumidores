@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useEmployees } from "@/hooks/useEmployees";
 import { useCompanies } from "@/hooks/useCompanies";
-import { Employee } from "@/lib/dexie/db";
+import { Employee } from "@/schemas/EmployeeSchema";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/ui/data-table";
 import { Button } from "@/components/ui/button";
@@ -49,7 +49,7 @@ import {
 import { EmployeeForm } from "./EmployeeForm";
 
 interface EmployeeListProps {
-  companyId?: number;
+  companyId?: string;
 }
 
 export default function EmployeeList({ companyId }: EmployeeListProps) {
@@ -67,7 +67,7 @@ export default function EmployeeList({ companyId }: EmployeeListProps) {
   const [editingEmployee, setEditingEmployee] = useState<Employee | null>(null);
 
   // Get company name for display
-  const getCompanyName = (companyId: number) => {
+  const getCompanyName = (companyId: string) => {
     const company = companies.find((c) => c.id === companyId);
     return company?.name || `Company #${companyId}`;
   };
@@ -77,7 +77,7 @@ export default function EmployeeList({ companyId }: EmployeeListProps) {
       identifier: formData.get("identifier") as string,
       name: formData.get("name") as string,
       role: formData.get("role") as string,
-      companyId: Number(formData.get("companyId")),
+      companyId: formData.get("companyId") as string,
       phoneNumber: formData.get("phoneNumber") as string,
       email: formData.get("email") as string,
     };
@@ -97,7 +97,7 @@ export default function EmployeeList({ companyId }: EmployeeListProps) {
       identifier: formData.get("identifier") as string,
       name: formData.get("name") as string,
       role: formData.get("role") as string,
-      companyId: Number(formData.get("companyId")),
+      companyId: formData.get("companyId") as string,
       phoneNumber: formData.get("phoneNumber") as string,
       email: formData.get("email") as string,
     };
@@ -110,7 +110,7 @@ export default function EmployeeList({ companyId }: EmployeeListProps) {
     }
   };
 
-  const handleDelete = async (employeeId: number) => {
+  const handleDelete = async (employeeId: string) => {
     try {
       await deleteEmployee(employeeId);
     } catch (error) {
