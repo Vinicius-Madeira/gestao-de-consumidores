@@ -33,7 +33,7 @@ const links = [
     ),
   },
   {
-    label: "Colaboradores",
+    label: "Contatos",
     href: "/employee",
     icon: (
       <IconUsers className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
@@ -64,23 +64,6 @@ export function Sidebar({ children }: SidebarProps) {
                 />
               ))}
             </div>
-          </div>
-          <div>
-            <SidebarLink
-              link={{
-                label: "Vinicius Madeira",
-                href: "#",
-                icon: (
-                  <Image
-                    src="/ef.png"
-                    className="h-7 w-7 shrink-0 rounded-full"
-                    width={50}
-                    height={50}
-                    alt="V"
-                  />
-                ),
-              }}
-            />
           </div>
         </SidebarBody>
       </SidebarRoot>

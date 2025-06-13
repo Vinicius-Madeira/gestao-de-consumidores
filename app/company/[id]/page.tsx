@@ -242,12 +242,12 @@ export default function Page() {
                 <AlertDialogContent>
                   <AlertDialogHeader>
                     <AlertDialogTitle>
-                      Deseja remover este colaborador?
+                      Deseja remover este contato?
                     </AlertDialogTitle>
                     <AlertDialogDescription>
                       Esta ação não pode ser desfeita. Isso irá excluir
-                      permanentemente o colaborador &quot;{employee.name}&quot;
-                      do banco de dados.
+                      permanentemente o contato &quot;{employee.name}&quot; do
+                      banco de dados.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
@@ -425,7 +425,7 @@ export default function Page() {
           {/* Employees Table */}
           <Card>
             <CardHeader>
-              <CardTitle>Listagem de Colaboradores</CardTitle>
+              <CardTitle>Listagem de Contatos</CardTitle>
             </CardHeader>
             <CardContent>
               <DataTable columns={columns} data={employees} />
@@ -439,11 +439,10 @@ export default function Page() {
           >
             <DialogContent className="max-w-2xl">
               <DialogHeader>
-                <DialogTitle>Editar Colaborador</DialogTitle>
+                <DialogTitle>Editar Contato</DialogTitle>
                 <DialogDescription>
-                  Atualizar as informações do colaborador selecionado.
-                  Certifique-se de que todos os campos obrigatórios estejam
-                  preenchidos.
+                  Atualizar as informações do contato selecionado. Certifique-se
+                  de que todos os campos obrigatórios estejam preenchidos.
                 </DialogDescription>
               </DialogHeader>
               {editingEmployee && (

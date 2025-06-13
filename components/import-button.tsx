@@ -130,7 +130,7 @@ export default function FileUploader({
       }
 
       toast.success(
-        `${parsedData.companies.length} empresas e ${parsedData.employees.length} colaboradores importados com sucesso!`
+        `${parsedData.companies.length} empresas e ${parsedData.employees.length} contatos importados com sucesso!`
       );
 
       // Call the callback to refresh data in parent components
@@ -226,9 +226,7 @@ export default function FileUploader({
                   </span>
                 </div>
                 <div className="flex justify-between items-center p-3 bg-green-50 dark:bg-green-950/20 rounded-lg">
-                  <span className="font-medium">
-                    Colaboradores encontrados:
-                  </span>
+                  <span className="font-medium">Contatos encontrados:</span>
                   <span className="text-lg font-bold text-green-600">
                     {parsedData.employees.length}
                   </span>

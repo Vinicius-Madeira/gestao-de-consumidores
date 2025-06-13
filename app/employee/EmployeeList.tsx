@@ -200,7 +200,7 @@ export default function EmployeeList({ companyId }: EmployeeListProps) {
   const columns: ColumnDef<Employee>[] = [
     {
       accessorKey: "identifier",
-      header: "ID",
+      header: "Identificador",
       cell: ({ row }) => (
         <div className="flex items-center gap-2">
           <User className="h-4 w-4 text-gray-400" />
@@ -290,12 +290,12 @@ export default function EmployeeList({ companyId }: EmployeeListProps) {
                 <AlertDialogContent>
                   <AlertDialogHeader>
                     <AlertDialogTitle>
-                      Deseja remover este colaborador?
+                      Deseja remover este contato?
                     </AlertDialogTitle>
                     <AlertDialogDescription>
                       Esta ação não pode ser desfeita. Isso irá excluir
-                      permanentemente o colaborador &quot;{employee.name}&quot;
-                      do banco de dados.
+                      permanentemente o contato &quot;{employee.name}&quot; do
+                      banco de dados.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
@@ -321,9 +321,7 @@ export default function EmployeeList({ companyId }: EmployeeListProps) {
       <div className="flex items-center justify-center h-48">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto"></div>
-          <p className="mt-2 text-sm text-gray-600">
-            Carregando Colaboradores...
-          </p>
+          <p className="mt-2 text-sm text-gray-600">Carregando Contatos...</p>
         </div>
       </div>
     );
@@ -347,13 +345,13 @@ export default function EmployeeList({ companyId }: EmployeeListProps) {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-4xl font-bold tracking-tight">
-            {companyId ? "Company Employees" : "Colaboradores"}
+            {companyId ? "Contatos da Empresa" : "Contatos"}
           </h1>
           <p className="text-muted-foreground">
-            Gerencie os colaboradores
+            Gerencie seus contatos
             {hasActiveFilters && (
               <span className="ml-2 text-blue-600">
-                ({filteredEmployees.length} de {employees.length} colaboradores)
+                ({filteredEmployees.length} de {employees.length} contatos)
               </span>
             )}
           </p>
@@ -365,12 +363,12 @@ export default function EmployeeList({ companyId }: EmployeeListProps) {
             <DialogTrigger asChild>
               <Button className="text-white">
                 <Plus className="mr-2 h-4 w-4" />
-                Adicionar Colaborador
+                Adicionar Contato
               </Button>
             </DialogTrigger>
             <DialogContent className="max-w-2xl">
               <DialogHeader>
-                <DialogTitle>Adicionar Novo Colaborador</DialogTitle>
+                <DialogTitle>Adicionar Novo Contato</DialogTitle>
                 <DialogDescription>
                   Preencha todos os campos abaixo.
                 </DialogDescription>
@@ -388,11 +386,7 @@ export default function EmployeeList({ companyId }: EmployeeListProps) {
       {/* Stats Card */}
       <div className="grid gap-4 md:grid-cols-4">
         <DataCard
-          title={
-            hasActiveFilters
-              ? "Colaboradores Filtrados"
-              : "Total de Colaboradores"
-          }
+          title={hasActiveFilters ? "Contatos Filtrados" : "Total de Contatos"}
           icon={<User className="h-4 w-4 text-muted-foreground" />}
         >
           <div className="text-2xl font-bold">{filteredEmployees.length}</div>
@@ -426,7 +420,7 @@ export default function EmployeeList({ companyId }: EmployeeListProps) {
       <Card>
         <CardHeader className="pb-4">
           <div className="flex items-center justify-between">
-            <CardTitle>Listagem de Colaboradores</CardTitle>
+            <CardTitle>Listagem de Contatos</CardTitle>
             <div className="flex items-center gap-2">
               {hasActiveFilters && (
                 <Button
@@ -561,10 +555,10 @@ export default function EmployeeList({ companyId }: EmployeeListProps) {
       >
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Editar Colaborador</DialogTitle>
+            <DialogTitle>Editar Contato</DialogTitle>
             <DialogDescription>
-              Atualizar as informações do colaborador selecionado. Certifique-se
-              de que todos os campos obrigatórios estejam preenchidos.
+              Atualizar as informações do contato selecionado. Certifique-se de
+              que todos os campos obrigatórios estejam preenchidos.
             </DialogDescription>
           </DialogHeader>
           {editingEmployee && (

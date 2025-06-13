@@ -132,7 +132,7 @@ export const useExportData = () => {
       writeFile(workbook, filename);
 
       toast.success(
-        `Dados exportados com sucesso! ${companies.length} empresas e ${employees.length} colaboradores exportados.`
+        `Dados exportados com sucesso! ${companies.length} empresas e ${employees.length} contatos exportados.`
       );
 
       return {
@@ -185,6 +185,7 @@ export const useExportData = () => {
           Nome: employee.name,
           Cargo: employee.role,
           Empresa:
+            // @ts-expect-error workaround
             employee.company?.name || `Company ID: ${employee.companyId}`,
           Telefone: employee.phoneNumber,
           Email: employee.email,
@@ -275,7 +276,7 @@ export const useExportData = () => {
       writeFile(workbook, filename);
 
       toast.success(
-        `Dados filtrados exportados! ${companies.length} empresas e ${employees.length} colaboradores exportados.`
+        `Dados filtrados exportados! ${companies.length} empresas e ${employees.length} contatos exportados.`
       );
 
       return {

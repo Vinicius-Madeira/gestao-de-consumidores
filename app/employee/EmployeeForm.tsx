@@ -103,7 +103,7 @@ export const EmployeeForm = ({
         Cancelar
       </Button>
       <Button className="text-white" type="submit">
-        {employee ? "Atualizar" : "Criar"} Colaborador
+        {employee ? "Atualizar" : "Criar"} Contato
       </Button>
     </div>
   </form>

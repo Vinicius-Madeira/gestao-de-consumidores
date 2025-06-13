@@ -100,7 +100,7 @@ export default function DashboardPage() {
           </DataCard>
 
           <DataCard
-            title="Total de Colaboradores"
+            title="Total de Contatos"
             icon={<Users className="h-4 w-4 text-muted-foreground" />}
           >
             <div className="text-2xl font-bold">{employees.length}</div>
@@ -211,7 +211,7 @@ export default function DashboardPage() {
                           employees.filter((e) => e.companyId === company.id)
                             .length
                         }{" "}
-                        colaboradores
+                        contatos
                       </span>
                     </div>
                   </div>
@@ -238,7 +238,7 @@ export default function DashboardPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <User className="h-5 w-5" />
-                Colaboradores Recentes
+                Contatos Recentes
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
@@ -269,14 +269,14 @@ export default function DashboardPage() {
                 })
               ) : (
                 <p className="text-muted-foreground text-center py-4">
-                  Nenhum colaborador cadastrado
+                  Nenhum contato cadastrado
                 </p>
               )}
               {employees.length > 5 && (
                 <div className="pt-2">
                   <Link href="/employee">
                     <Button variant="outline" className="w-full">
-                      Ver todos os {employees.length} colaboradores
+                      Ver todos os {employees.length} contatos
                     </Button>
                   </Link>
                 </div>
