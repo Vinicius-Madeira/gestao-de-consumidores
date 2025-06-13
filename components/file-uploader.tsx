@@ -1,6 +1,13 @@
 "use client";
-import React, { useState, useRef, DragEvent, ChangeEvent } from "react";
+import React, {
+  useState,
+  useRef,
+  DragEvent,
+  ChangeEvent,
+  useEffect,
+} from "react";
 import { Upload, X, File } from "lucide-react";
+import { useFetchCsv } from "@/hooks/useFetchCsv";
 
 interface FileUploaderProps {
   onFilesChange?: (files: File[]) => void;
@@ -9,11 +16,12 @@ interface FileUploaderProps {
 
 export default function FileUploader({
   onFilesChange,
-  acceptedTypes = [".csv", ".xlsx", ".xls"],
+  acceptedTypes = [".csv", ".xlsx"],
 }: FileUploaderProps) {
   const [files, setFiles] = useState<File[]>([]);
   const [isDragOver, setIsDragOver] = useState(false);
   const [error, setError] = useState<string>("");
+  const { csvData, parseCsv, resetCsvData } = useFetchCsv();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const validateFile = (file: File): string | null => {
@@ -80,6 +88,19 @@ export default function FileUploader({
     setFiles([]);
     onFilesChange?.([]);
   };
+
+  useEffect(() => {
+    console.log("useEffect");
+    if (files.length === 0) {
+      resetCsvData();
+    }
+    if (files.length > 0) {
+      setError("");
+      parseCsv(files[0]);
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [files]);
 
   return (
     <div className="w-full max-w-2xl mx-auto p-6">
