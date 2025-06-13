@@ -67,6 +67,7 @@ import Link from "next/link";
 import { CompanyForm } from "./CompanyForm";
 import { formatConsumption, formatCurrency } from "@/lib/utils";
 import DataCard from "@/components/data-card";
+import ExportButton from "@/components/export-button";
 
 interface CompanyFilters {
   name: string;
@@ -441,7 +442,8 @@ export default function CompanyList() {
           </p>
         </div>
 
-        <div className="flex gap-2">
+        <div className="flex items-center gap-2">
+          <ExportButton />
           <Dialog open={isCreating} onOpenChange={setIsCreating}>
             <DialogTrigger asChild>
               <Button className="text-white">

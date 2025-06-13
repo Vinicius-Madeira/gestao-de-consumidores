@@ -64,6 +64,7 @@ import {
 } from "@/components/ui/collapsible";
 import { EmployeeForm } from "./EmployeeForm";
 import DataCard from "@/components/data-card";
+import ExportButton from "@/components/export-button";
 
 interface EmployeeFilters {
   identifier: string;
@@ -358,27 +359,30 @@ export default function EmployeeList({ companyId }: EmployeeListProps) {
           </p>
         </div>
 
-        <Dialog open={isCreating} onOpenChange={setIsCreating}>
-          <DialogTrigger asChild>
-            <Button className="text-white">
-              <Plus className="mr-2 h-4 w-4" />
-              Adicionar Colaborador
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-2xl">
-            <DialogHeader>
-              <DialogTitle>Adicionar Novo Colaborador</DialogTitle>
-              <DialogDescription>
-                Preencha todos os campos abaixo.
-              </DialogDescription>
-            </DialogHeader>
-            <EmployeeForm
-              companies={companies}
-              onSubmit={handleCreate}
-              onCancel={() => setIsCreating(false)}
-            />
-          </DialogContent>
-        </Dialog>
+        <div className="flex gap-2">
+          <ExportButton />
+          <Dialog open={isCreating} onOpenChange={setIsCreating}>
+            <DialogTrigger asChild>
+              <Button className="text-white">
+                <Plus className="mr-2 h-4 w-4" />
+                Adicionar Colaborador
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-2xl">
+              <DialogHeader>
+                <DialogTitle>Adicionar Novo Colaborador</DialogTitle>
+                <DialogDescription>
+                  Preencha todos os campos abaixo.
+                </DialogDescription>
+              </DialogHeader>
+              <EmployeeForm
+                companies={companies}
+                onSubmit={handleCreate}
+                onCancel={() => setIsCreating(false)}
+              />
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
 
       {/* Stats Card */}

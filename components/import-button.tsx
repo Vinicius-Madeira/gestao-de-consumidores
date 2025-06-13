@@ -196,7 +196,7 @@ export default function FileUploader({
         className="flex items-center gap-2 text-white"
       >
         <Upload className="h-4 w-4" />
-        Importar CSV
+        Importar Dados
       </Button>
 
       <Dialog

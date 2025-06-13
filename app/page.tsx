@@ -1,6 +1,6 @@
 "use client";
 
-import FileUploader from "@/components/file-uploader";
+import FileUploader from "@/components/import-button";
 import { useCompanies } from "@/hooks/useCompanies";
 import { useEmployees } from "@/hooks/useEmployees";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,6 +11,7 @@ import { formatConsumption, formatCurrency } from "@/lib/utils";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import DataCard from "@/components/data-card";
+import ExportButton from "@/components/export-button";
 
 export const dynamic = "force-static";
 
@@ -84,18 +85,7 @@ export default function DashboardPage() {
             </p>
           </div>
           <div className="flex gap-2">
-            <Link href="/company">
-              <Button variant="outline">
-                <Building className="mr-2 h-4 w-4" />
-                Ver Empresas
-              </Button>
-            </Link>
-            <Link href="/employee">
-              <Button variant="outline">
-                <User className="mr-2 h-4 w-4" />
-                Ver Colaboradores
-              </Button>
-            </Link>
+            <ExportButton />
             <FileUploader onImportComplete={handleImportComplete} />
           </div>
         </div>
