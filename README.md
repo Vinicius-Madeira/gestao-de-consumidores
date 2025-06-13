@@ -1,36 +1,64 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Gestão de Contatos
 
-## Getting Started
+A modern contact and company management system built with Next.js, designed to help you efficiently manage business relationships and energy consumption data.
 
-First, run the development server:
+## ✨ Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **Company Management**: Track companies with detailed energy consumption data
+- **Employee Management**: Organize employee information and company associations
+- **Data Import/Export**: Seamlessly import from CSV/XLSX files and export your data
+- **Advanced Filtering**: Powerful filtering options to find exactly what you need
+- **Modern UI**: Clean and intuitive interface to help visualize your data
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🚀 Getting Started
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. Clone the repository
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+   ```sh
+   git clone git@github.com:Vinicius-Madeira/gestao-de-contatos.git
+   ```
 
-## Learn More
+2. Install dependencies:
+   ```sh
+   npm install
+   ```
+3. Start the development server:
+   ```sh
+   npm run dev
+   ```
+4. Open [http://localhost:3000](http://localhost:3000) in your browser
 
-To learn more about Next.js, take a look at the following resources:
+## 📊 What You Can Do
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **Import Data**: Upload CSV or XLSX files to quickly populate your database
+- **Manage Companies**: Track energy consumption, billing rates, and supplier information
+- **Organize Employees**: Maintain employee records with company associations
+- **Filter & Search**: Find specific records using powerful filtering tools
+- **Export Reports**: Download your data in XLSX format for external use
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🛠️ Built With
 
-## Deploy on Vercel
+- **Next.js** - React framework for production
+- **TypeScript** - Type-safe development
+- **Tailwind CSS** - Modern styling
+- **IndexedDB** - Client-side data storage
+- **PWA Support** - Easier access to the app
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 📱 Progressive Web App
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+This application works as a PWA, meaning you can:
+
+- Install it on your device like a native app
+- Access it from your app list
+
+## 🔮 What's Next
+
+- **Data Synchronization**: Cloud sync for multi-device access
+- **Enhanced CSV/XLSX Imports**: Enhanced Import customizations like selecting the data sheet or even the tables.
+- **Full Offline Support**: Work on the app fully offline when using the installed PWA version.
+- **Advanced Analytics**: Energy consumption insights and reporting
+- **Team Collaboration**: Share data and collaborate with team members
+
+---
+
+_Perfect for energy consultants, facility managers, and businesses tracking energy consumption data._
