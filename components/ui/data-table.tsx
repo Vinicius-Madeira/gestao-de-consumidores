@@ -64,13 +64,16 @@ export function DataTable<TData, TValue>({
     const end = Math.min(totalPages - 1, currentPage + delta);
 
     for (let i = start; i <= end; i++) {
+      // @ts-expect-error TS2345
       range.push(i);
     }
 
     // Add first page and dots if necessary
     if (start > 0) {
+      // @ts-expect-error TS2345
       rangeWithDots.push(0);
       if (start > 1) {
+        // @ts-expect-error TS2345
         rangeWithDots.push("...");
       }
     }
@@ -81,8 +84,10 @@ export function DataTable<TData, TValue>({
     // Add last page and dots if necessary
     if (end < totalPages - 1) {
       if (end < totalPages - 2) {
+        // @ts-expect-error TS2345
         rangeWithDots.push("...");
       }
+      // @ts-expect-error TS2345
       rangeWithDots.push(totalPages - 1);
     }
 

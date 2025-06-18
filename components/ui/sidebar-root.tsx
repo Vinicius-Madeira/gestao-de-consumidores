@@ -174,6 +174,7 @@ export const SidebarLink = ({
         className
       )}
       {...props}
+      prefetch={false}
     >
       {active && (
         <span className="absolute -left-1 h-5 w-0.5 bg-primary"></span>

@@ -2,15 +2,12 @@
 import React, { PropsWithChildren, useState } from "react";
 import { SidebarRoot, SidebarBody, SidebarLink } from "./ui/sidebar-root";
 import {
-  IconAddressBook,
   IconBuildings,
   IconLayoutDashboard,
-  IconLogout2,
   IconUsers,
 } from "@tabler/icons-react";
 import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ScrollArea } from "./ui/scroll-area";
@@ -71,6 +68,7 @@ export function Sidebar({ children }: SidebarProps) {
     </div>
   );
 }
+
 export const Logo = () => {
   return (
     <a
