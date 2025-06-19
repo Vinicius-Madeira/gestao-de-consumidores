@@ -9,6 +9,7 @@ A modern contact and company management system built with Next.js, designed to h
 - **Data Import/Export**: Seamlessly import from CSV/XLSX files and export your data
 - **Advanced Filtering**: Powerful filtering options to find exactly what you need
 - **Modern UI**: Clean and intuitive interface to help visualize your data
+- **Full Offline Support**: Keep working on the app while offline
 
 ## 🚀 Getting Started
 
@@ -50,12 +51,12 @@ This application works as a PWA, meaning you can:
 
 - Install it on your device like a native app
 - Access it from your app list
+- Use the app while offline
 
 ## 🔮 What's Next
 
 - **Data Synchronization**: Cloud sync for multi-device access
 - **Enhanced CSV/XLSX Imports**: Enhanced Import customizations like selecting the data sheet or even the tables.
-- **Full Offline Support**: Work on the app fully offline when using the installed PWA version.
 - **Advanced Analytics**: Energy consumption insights and reporting
 - **Team Collaboration**: Share data and collaborate with team members
 

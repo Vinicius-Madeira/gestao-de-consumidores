@@ -56,8 +56,8 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { EmployeeForm } from "@/app/employee/EmployeeForm";
 
-export default function Page() {
-  const { id } = useParams();
+export default function OfflineTemplate() {
+  const [companyId, setCompanyId] = useState<string | null>(null);
   const router = useRouter();
   const [isOnline, setIsOnline] = useState(true);
   const {
@@ -65,18 +65,24 @@ export default function Page() {
     updateCompany,
     loading: companyLoading,
     error: companyError,
-  } = useCompany(id as string);
+  } = useCompany(companyId as string);
   const {
     employees,
     updateEmployee,
     deleteEmployee,
     loading: employeesLoading,
-  } = useEmployees(id as string);
+  } = useEmployees(companyId as string);
   const [editingCompany, setEditingCompany] = useState(false);
   const [editingEmployee, setEditingEmployee] = useState<Employee | null>(null);
 
   // Handle online/offline detection
   useEffect(() => {
+    const path = window.location.pathname;
+    const parts = path.split("/");
+    if (parts[1] === "company" && parts[2]) {
+      setCompanyId(parts[2]);
+    }
+
     const handleOnline = () => setIsOnline(true);
     const handleOffline = () => setIsOnline(false);
 

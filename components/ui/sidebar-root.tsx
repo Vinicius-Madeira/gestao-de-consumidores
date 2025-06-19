@@ -54,7 +54,7 @@ export const SidebarProvider = ({
 
 export const SidebarRoot = ({
   children,
-  open,
+  open = false,
   setOpen,
   animate,
 }: {
@@ -89,11 +89,12 @@ export const DesktopSidebar = ({
     <>
       <motion.div
         className={cn(
-          "h-full px-4 py-4 hidden  md:flex md:flex-col bg-neutral-100 dark:bg-neutral-800 w-[300px] shrink-0",
+          "h-full px-4 py-4 hidden  md:flex md:flex-col bg-neutral-100 dark:bg-neutral-800 shrink-0",
           className
         )}
+        initial={{ width: open ? "200px" : "60px" }}
         animate={{
-          width: animate ? (open ? "200px" : "60px") : "200px",
+          width: animate ? (open ? "200px" : "60px") : "60px",
         }}
         onMouseEnter={() => setOpen(true)}
         onMouseLeave={() => setOpen(false)}
@@ -174,6 +175,7 @@ export const SidebarLink = ({
         className
       )}
       {...props}
+      prefetch={false}
     >
       {active && (
         <span className="absolute -left-1 h-5 w-0.5 bg-primary"></span>

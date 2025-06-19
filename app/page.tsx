@@ -197,6 +197,7 @@ export default function DashboardPage() {
                       <Link
                         href={`/company/${company.id}`}
                         className="font-medium hover:underline"
+                        prefetch={false}
                       >
                         {company.name}
                       </Link>
@@ -223,7 +224,7 @@ export default function DashboardPage() {
               )}
               {companies.length > 5 && (
                 <div className="pt-2">
-                  <Link href="/company">
+                  <Link href="/company" prefetch={false}>
                     <Button variant="outline" className="w-full">
                       Ver todas as {companies.length} empresas
                     </Button>
@@ -274,7 +275,7 @@ export default function DashboardPage() {
               )}
               {employees.length > 5 && (
                 <div className="pt-2">
-                  <Link href="/employee">
+                  <Link href="/employee" prefetch={false}>
                     <Button variant="outline" className="w-full">
                       Ver todos os {employees.length} contatos
                     </Button>
