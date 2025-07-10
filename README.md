@@ -28,6 +28,7 @@ A modern contact and company management system built with Next.js, designed to h
    npm run dev
    ```
 4. Open [http://localhost:3000](http://localhost:3000) in your browser
+5. (_Optional_) Download [this](https://docs.google.com/spreadsheets/d/1HnTocNRYKbUly8RlZYE6TKdyJOhcvZiTkessJ8WTmv8/edit?usp=sharing) excel file and import it in the app.
 
 ## 📊 What You Can Do
 
